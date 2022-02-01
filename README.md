@@ -16,3 +16,11 @@ Anyone who:
 
 ### Why is this project of interest to you?
 When I first came across cryptography, I found the whole idea of encryption fascinating – securely transmitting messages meant for only the person on the other side. Though the math and calculations seem daunting at first, even *military-grade* encryption is built up from smaller operations, following principles of confusion and diffusion. With this project, I hope to connect the individual 0's and 1's to the complex algorithms that modern ciphers rely upon.
+
+### User Stories
+As a user, I want to be able to:
+- add custom rounds to an existing cipher
+- modify custom rounds in an existing cipher
+- choose the type of round and relevant mappings
+- encrypt data with an existing cipher
+- decrypt data with an existing cipher
