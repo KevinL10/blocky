@@ -7,10 +7,10 @@ according to a certain mapping
 public class PermutationRound implements Round {
 
     // REQUIRES: blockSize should be the same as the cipher's block size
-    // MODIFIES: this
     // EFFECTS: constructs a permutation mapping of size blockSize
     // initialized with the identity mapping (0 to 0, 1 to 1, etc.)
-    public PermutationRound(int blockSize) {
+    public PermutationRound(int blockSizeInBytes) {
+
     }
 
     @Override

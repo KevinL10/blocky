@@ -9,9 +9,8 @@ an output of the same size.
  */
 public class Cipher {
 
-    // REQUIRES: blockSize is a multiple of 8
-    // EFFECTS: constructs an empty cipher with the given blockSize in bits
-    public Cipher(int blockSizeInBits) {
+    // EFFECTS: constructs an empty cipher with the given blockSize in bytes
+    public Cipher(int blockSizeInBytes) {
     }
 
     // MODIFIES: this
@@ -20,17 +19,17 @@ public class Cipher {
 
     }
 
-    // REQUIRES: plaintext should have length blockSizeInBits/8
+    // REQUIRES: plaintext should have length blockSize
     // and key should have length equal to the # of key rounds
-    // and each Byte[] should have length blockSizeInBits/8
+    // and each Byte[] should have length blockSize
     // EFFECTS: returns an encrypted byte-array of plaintext
     public Byte[] encryptByteArray(Byte[] plaintext, ArrayList<Byte[]> key) {
         return null;
     }
 
-    // REQUIRES: ciphertext should have length blockSizeInBits/8
+    // REQUIRES: ciphertext should have length blockSize
     // and key should have length equal to the # of key rounds
-    // and each Byte[] should have length blockSizeInBits/8
+    // and each Byte[] should have length blockSize
     // EFFECTS: returns a decrypted byte-array of plaintext
     public Byte[] decryptByteArray(Byte[] ciphertext, ArrayList<Byte[]> key) {
         return null;

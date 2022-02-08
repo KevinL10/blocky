@@ -6,21 +6,21 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CipherTest {
-    Cipher cipher8;
-    Cipher cipher16;
+    Cipher cipher1;
+    Cipher cipher2;
 
     @BeforeEach
     public void runBefore() {
-        cipher8 = new Cipher(8);
-        cipher16 = new Cipher(16);
+        cipher1 = new Cipher(1);
+        cipher2 = new Cipher(2);
     }
 
     @Test
     public void testConstructor() {
-        assertEquals(0, cipher8.getNumberOfRounds());
-        assertEquals(0, cipher16.getNumberOfRounds());
+        assertEquals(0, cipher1.getNumberOfRounds());
+        assertEquals(0, cipher2.getNumberOfRounds());
 
-        assertEquals(8, cipher8.getBlockSize());
-        assertEquals(16, cipher16.getBlockSize());
+        assertEquals(1, cipher1.getBlockSize());
+        assertEquals(2, cipher2.getBlockSize());
     }
 }
