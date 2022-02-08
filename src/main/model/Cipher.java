@@ -35,4 +35,13 @@ public class Cipher {
     public Byte[] decryptByteArray(Byte[] ciphertext, ArrayList<Byte[]> key) {
         return null;
     }
+
+    // getters and setters
+    public int getNumberOfRounds() {
+        return 0;
+    }
+
+    public int getBlockSize() {
+        return 0;
+    }
 }
