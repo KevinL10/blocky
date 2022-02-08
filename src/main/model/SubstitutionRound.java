@@ -19,6 +19,11 @@ public class SubstitutionRound implements Round {
         return null;
     }
 
+    @Override
+    public Byte[] decryptRound(Byte[] inputBytes) {
+        return null;
+    }
+
     // MODIFIES: this
     // EFFECTS: randomizes the substitution mapping
     public void fillWithRandomSubstitution() {

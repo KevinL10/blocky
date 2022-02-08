@@ -18,6 +18,11 @@ public class PermutationRound implements Round {
         return null;
     }
 
+    @Override
+    public Byte[] decryptRound(Byte[] inputBytes) {
+        return null;
+    }
+
     // MODIFIES: this
     // EFFECTS: randomizes the permutation mapping
     public void fillWithRandomPermutation() {
@@ -28,6 +33,4 @@ public class PermutationRound implements Round {
     public void setPermutationMapping(int[] mapping) {
 
     }
-
-
 }

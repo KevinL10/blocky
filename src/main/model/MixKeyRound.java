@@ -10,6 +10,11 @@ public class MixKeyRound implements Round {
         return null;
     }
 
+    @Override
+    public Byte[] decryptRound(Byte[] inputBytes) {
+        return null;
+    }
+
     // getters and setters
     public void setKey(Byte[] key){
 

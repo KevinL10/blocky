@@ -8,33 +8,31 @@ where each Round takes in a fixed BLOCK_SIZE and produces
 an output of the same size.
  */
 public class Cipher {
-    private int blockSize;
-    private ArrayList<Round> rounds;
 
-    // REQUIRES: blockSize is a multiple of 4
-    // MODIFIES: this
-    // EFFECTS: constructs a new cipher with no rounds
-    // and the given block size
-    public Cipher(int blockSize) {
-        rounds = new ArrayList<>();
-        this.blockSize = blockSize;
+    // REQUIRES: blockSize is a multiple of 8
+    // EFFECTS: constructs an empty cipher with the given blockSize in bits
+    public Cipher(int blockSizeInBits) {
     }
 
     // MODIFIES: this
     // EFFECTS: adds the given round to the list of rounds
     public void addRound(Round round) {
-        rounds.add(round);
+
     }
 
-    // REQUIRES: plaintext should have length blockSize
+    // REQUIRES: plaintext should have length blockSizeInBits/8
+    // and key should have length equal to the # of key rounds
+    // and each Byte[] should have length blockSizeInBits/8
     // EFFECTS: returns an encrypted byte-array of plaintext
-    public Byte[] encryptByteArray(Byte[] plaintext) {
+    public Byte[] encryptByteArray(Byte[] plaintext, ArrayList<Byte[]> key) {
         return null;
     }
 
-    // REQUIRES: ciphertext should have length blockSize
+    // REQUIRES: ciphertext should have length blockSizeInBits/8
+    // and key should have length equal to the # of key rounds
+    // and each Byte[] should have length blockSizeInBits/8
     // EFFECTS: returns a decrypted byte-array of plaintext
-    public Byte[] decryptByteArray(Byte[] ciphertext) {
+    public Byte[] decryptByteArray(Byte[] ciphertext, ArrayList<Byte[]> key) {
         return null;
     }
 }
