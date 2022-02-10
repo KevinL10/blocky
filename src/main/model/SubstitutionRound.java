@@ -6,10 +6,9 @@ with a corresponding 4-bit value
  */
 public class SubstitutionRound implements Round {
 
-    // REQUIRES: blockSize should be the same as the cipher's block size
     // EFFECTS: constructs a substitution mapping of size 16 (4-bits)
     // initialized with the identity mapping (0 to 0, 1 to 1, etc.)
-    public SubstitutionRound(int blockSizeInBytes) {
+    public SubstitutionRound() {
 
     }
 
@@ -30,7 +29,14 @@ public class SubstitutionRound implements Round {
     }
 
     // getters and setters
+
+    // REQUIRES: mapping should have size 16 and uniquely contain 0-15
+    // EFFECTS: copies the *values* from given mapping into the round's mapping
     public void setSubstitutionMapping(int[] mapping) {
 
+    }
+
+    public int[] getMapping() {
+        return null;
     }
 }
