@@ -23,23 +23,26 @@ public class PermutationRound implements Round {
     }
 
     @Override
+    // REQUIRES: inputBytes should have length equal to blockSize of the cipher
+    // EFFECTS: returns an encrypted bytearray by rearranging all plaintext bits
+    // according to the mapping
     public Byte[] encryptRound(Byte[] inputBytes) {
         String originalBits = "";
-        int[] permutatedBits = new int[blockSize * 8];
+        int[] permutedBits = new int[blockSize * 8];
         Byte[] output = new Byte[blockSize];
 
         for (int i = 0; i < blockSize; i++) {
             originalBits += convertByteToBits(inputBytes[i]);
         }
         for (int i = 0; i < originalBits.length(); i++) {
-            permutatedBits[mapping[i]] = originalBits.charAt(i) - '0';
+            permutedBits[mapping[i]] = originalBits.charAt(i) - '0';
         }
 
         // go through each byte, convert to a string
         for (int i = 0; i < blockSize; i++) {
             String currentByte = "";
             for (int j = 0; j < 8; j++) {
-                currentByte += permutatedBits[8 * i + j];
+                currentByte += permutedBits[8 * i + j];
             }
             output[i] = (byte) Integer.parseInt(currentByte, 2);
         }
@@ -47,27 +50,30 @@ public class PermutationRound implements Round {
     }
 
     @Override
+    // REQUIRES: inputBytes should have length equal to blockSize of the cipher
+    // EFFECTS: returns a decrypted bytearray by rearranging all plaintext bits
+    // according to the inverse mapping
     public Byte[] decryptRound(Byte[] inputBytes) {
         int[] inverseMapping = new int[16];
         for (int i = 0; i < 16; i++) {
             inverseMapping[mapping[i]] = i;
         }
         String originalBits = "";
-        int[] permutatedBits = new int[blockSize * 8];
+        int[] permutedBits = new int[blockSize * 8];
         Byte[] output = new Byte[blockSize];
 
         for (int i = 0; i < blockSize; i++) {
             originalBits += convertByteToBits(inputBytes[i]);
         }
         for (int i = 0; i < originalBits.length(); i++) {
-            permutatedBits[inverseMapping[i]] = originalBits.charAt(i) - '0';
+            permutedBits[inverseMapping[i]] = originalBits.charAt(i) - '0';
         }
 
         // go through each byte, convert to a string
         for (int i = 0; i < blockSize; i++) {
             String currentByte = "";
             for (int j = 0; j < 8; j++) {
-                currentByte += permutatedBits[8 * i + j];
+                currentByte += permutedBits[8 * i + j];
             }
             output[i] = (byte) Integer.parseInt(currentByte, 2);
         }

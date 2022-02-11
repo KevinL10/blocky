@@ -10,7 +10,7 @@ public class SubstitutionRoundTest {
 
     @BeforeEach
     public void runBefore() {
-        round = new SubstitutionRound();
+        round = new SubstitutionRound(2);
     }
 
     @Test

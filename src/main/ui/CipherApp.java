@@ -152,7 +152,7 @@ public class CipherApp {
     // EFFECTS: add a substitution round to the cipher with the specified mapping
     private void handleSubstitution() {
         int blockSize = cipher.getBlockSize();
-        SubstitutionRound round = new SubstitutionRound();
+        SubstitutionRound round = new SubstitutionRound(blockSize);
         int[] mapping = new int[blockSize * 8];
         System.out.println("Choose an option for your substitution mapping");
         System.out.println("\t[r]: randomized substitution");

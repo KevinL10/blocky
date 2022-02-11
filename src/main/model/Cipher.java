@@ -3,14 +3,13 @@ package model;
 import java.util.ArrayList;
 
 /*
-Represents the cipher as a sequence of individual Rounds,
-where each Round takes in a fixed BLOCK_SIZE and produces
-an output of the same size.
+Represents the cipher as a sequence of individual Rounds, each with size blockSize
  */
 public class Cipher {
     private ArrayList<Round> rounds;
     private int blockSize;
 
+    // REQUIRES: blockSize should be positive
     // EFFECTS: constructs an empty cipher with the given blockSize in bytes
     public Cipher(int blockSize) {
         rounds = new ArrayList<>();
@@ -18,45 +17,47 @@ public class Cipher {
     }
 
     // MODIFIES: this
-    // EFFECTS: adds the given round to the list of rounds
+    // EFFECTS: appends the given round to the current cipher
     public void addRound(Round round) {
         rounds.add(round);
     }
 
     // REQUIRES: plaintext should have length blockSize
-    // and key should have length equal to the # of key rounds
-    // and each Byte[] should have length blockSize
+    // keys should have length equal to the # of key rounds
+    // each bytearray in keys should have length blockSize
+    // MODIFIES: this
     // EFFECTS: returns an encrypted byte-array of plaintext
     public Byte[] encryptByteArray(Byte[] plaintext, ArrayList<Byte[]> keys) {
         int keyIndex = 0;
         Byte[] currentBytes = plaintext.clone();
+
+        // encrypt the current bytes at each round (from beginning to end)
         for (Round round : rounds) {
             if (round instanceof MixKeyRound) {
                 ((MixKeyRound) round).setKey(keys.get(keyIndex));
                 keyIndex++;
             }
-
             currentBytes = round.encryptRound(currentBytes);
         }
         return currentBytes;
     }
 
     // REQUIRES: ciphertext should have length blockSize
-    // and key should have length equal to the # of key rounds
-    // and each Byte[] should have length blockSize
+    // keys should have length equal to the # of key rounds
+    // each bytearray in keys should have length blockSize
+    // MODIFIES: this
     // EFFECTS: returns a decrypted byte-array of plaintext
     public Byte[] decryptByteArray(Byte[] ciphertext, ArrayList<Byte[]> keys) {
         int keyIndex = keys.size() - 1;
         Byte[] currentBytes = ciphertext.clone();
 
-        // go through the rounds backward (for decryption)
+        // decrypt the current bytes at each round (from end to beginning)
         for (int i = rounds.size() - 1; i >= 0; i--) {
             Round round = rounds.get(i);
             if (round instanceof MixKeyRound) {
                 ((MixKeyRound) round).setKey(keys.get(keyIndex));
                 keyIndex--;
             }
-
             currentBytes = round.decryptRound(currentBytes);
         }
         return currentBytes;
@@ -64,13 +65,13 @@ public class Cipher {
 
     // EFFECTS: returns the number of key rounds in the cipher
     public int getNumberOfKeyRounds() {
-        int count = 0;
+        int keyRoundNum = 0;
         for (Round round : rounds) {
             if (round instanceof MixKeyRound) {
-                count++;
+                keyRoundNum++;
             }
         }
-        return count;
+        return keyRoundNum;
     }
 
     // getters and setters

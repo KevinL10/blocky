@@ -20,7 +20,7 @@ When I first came across cryptography, I found the whole idea of encryption fasc
 ### User Stories
 As a user, I want to be able to:
 - add custom rounds to an existing cipher
-- modify custom rounds in an existing cipher
 - choose the type of round and relevant mappings
+- view the rounds of a cipher
 - encrypt data with an existing cipher
 - decrypt data with an existing cipher

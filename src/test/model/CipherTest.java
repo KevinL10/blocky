@@ -26,7 +26,7 @@ class CipherTest {
         pround.setPermutationMapping(permutationMapping);
 
         // instantiate the substitution round
-        sround = new SubstitutionRound();
+        sround = new SubstitutionRound(BLOCK_SIZE);
         sround.setSubstitutionMapping(substitutionMapping);
 
         // instantiate the key rounds

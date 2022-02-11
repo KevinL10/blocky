@@ -10,10 +10,12 @@ with a corresponding 4-bit value
  */
 public class SubstitutionRound implements Round {
     private int[] mapping;
+    private int blockSize;
 
     // EFFECTS: constructs a substitution mapping of size 16 (4-bits)
     // initialized with the identity mapping (0 to 0, 1 to 1, etc.)
-    public SubstitutionRound() {
+    public SubstitutionRound(int blockSize) {
+        this.blockSize = blockSize;
         mapping = new int[16];
         for (int i = 0; i < 16; i++) {
             mapping[i] = i;
@@ -21,6 +23,9 @@ public class SubstitutionRound implements Round {
     }
 
     @Override
+    // REQUIRES: inputBytes should have length equal to blockSize of the cipher
+    // EFFECTS: returns an encrypted bytearray where all 4-bit blocks
+    // are substituted according to the round's mapping
     public Byte[] encryptRound(Byte[] inputBytes) {
         int blockSize = inputBytes.length;
         Byte[] output = new Byte[blockSize];
@@ -37,6 +42,9 @@ public class SubstitutionRound implements Round {
     }
 
     @Override
+    // REQUIRES: inputBytes should have length equal to blockSize of the cipher
+    // EFFECTS: returns a decrypted bytearray where all 4-bit blocks
+    // are un-substituted according to the round's mapping
     public Byte[] decryptRound(Byte[] inputBytes) {
         int[] inverseMapping = new int[16];
         // find the inverse mapping
@@ -73,7 +81,8 @@ public class SubstitutionRound implements Round {
 
     // getters and setters
 
-    // REQUIRES: mapping should have size 16 and uniquely contain 0-15
+    // REQUIRES: mapping should have size 16 and uniquely contain the numbers 0-15
+    // MODIFIES: this
     // EFFECTS: copies the *values* from given mapping into the round's mapping
     public void setSubstitutionMapping(int[] mapping) {
         this.mapping = mapping.clone();
