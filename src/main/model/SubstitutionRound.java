@@ -36,7 +36,7 @@ public class SubstitutionRound implements Round {
 
     }
 
-    public int[] getMapping() {
+    public int[] getSubstitutionMapping() {
         return null;
     }
 }

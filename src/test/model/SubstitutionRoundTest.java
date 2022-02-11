@@ -15,7 +15,7 @@ public class SubstitutionRoundTest {
 
     @Test
     public void testConstructor() {
-        int[] mapping = round.getMapping();
+        int[] mapping = round.getSubstitutionMapping();
         for (int i = 0; i < 16; i++) {
             assertEquals(i, mapping[i]);
         }
@@ -65,10 +65,10 @@ public class SubstitutionRoundTest {
     }
 
     @Test
-    public void testRandomSubstitution() {
+    public void testRandomSubstitutionNoDuplicates() {
         round.fillWithRandomSubstitution();
 
-        int[] mapping = round.getMapping();
+        int[] mapping = round.getSubstitutionMapping();
         boolean[] containsN = new boolean[16];
 
         // check that all numbers from 0 to 15 inclusive appear exactly once
@@ -80,5 +80,22 @@ public class SubstitutionRoundTest {
         for(int i = 0; i < 16; i++){
             assertTrue(containsN[i]);
         }
+    }
+
+    @Test
+    public void testRandomSubstitutionRandomized() {
+        round.fillWithRandomSubstitution();
+        int[] mapping = round.getSubstitutionMapping();
+
+        // check that the mapping is randomized (different from identity permutation)
+        boolean isRandomized = false;
+        for (int i = 0; i < 16; i++) {
+            if(mapping[i] != i){
+                isRandomized = true;
+                break;
+            }
+        }
+
+        assertTrue(isRandomized);
     }
 }
