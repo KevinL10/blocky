@@ -36,6 +36,10 @@ public class Cipher {
     }
 
     // getters and setters
+    public ArrayList<Round> getRounds() {
+        return null;
+    }
+
     public int getNumberOfRounds() {
         return 0;
     }

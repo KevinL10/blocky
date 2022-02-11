@@ -58,6 +58,42 @@ public class PermutationRoundTest {
     }
 
     @Test
+    public void testDecryptRound() {
+        int[] mapping = {2, 4, 13, 0, 8, 10, 1, 11, 12, 3, 6, 9, 7, 5, 14, 15};
+        // mapping such that mapping[inverseMapping[a]] = a;
+        int[] inverseMapping = {3, 6, 0, 9, 1, 13, 10, 12, 4, 11, 5, 7, 8, 2, 14, 15};
+
+        round.setPermutationMapping(mapping);
+
+        Byte[] ciphertext = {(byte) 168, (byte) 230};
+        Byte[] plaintext = round.decryptRound(ciphertext);
+        int[] expectedBits = new int[BLOCK_SIZE * 8];
+        int[] permutatedBits = new int[BLOCK_SIZE * 8];
+
+        // Represent the bytes as an array of bits (from left to right)
+        for (int i = 0; i < BLOCK_SIZE; i++) {
+            for (int j = 0; j < 8; j++) {
+                int index = 8 * i + j;
+                expectedBits[index] = PermutationRound.getBitByIndex(ciphertext[i], j);
+            }
+        }
+
+        // Permutate the bits according to the mapping
+        for (int i = 0; i < BLOCK_SIZE * 8; i++) {
+            permutatedBits[inverseMapping[i]] = expectedBits[i];
+        }
+
+        // Check that each bit is equal to the encrypted value
+        for (int i = 0; i < BLOCK_SIZE; i++) {
+            for (int j = 0; j < 8; j++) {
+                int index = 8 * i + j;
+                int decryptedBit = PermutationRound.getBitByIndex(plaintext[i], j);
+                assertEquals(permutatedBits[index], decryptedBit);
+            }
+        }
+    }
+
+    @Test
     public void testGetBitByIndex() {
         // For 210: 11010010
         int[] expectedBits = {1, 1, 0, 1, 0, 0, 1, 0};
