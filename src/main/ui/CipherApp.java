@@ -2,6 +2,8 @@ package ui;
 
 import model.*;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 // referenced the TellerApp class provided by CPSC 210
@@ -17,8 +19,7 @@ public class CipherApp {
     // MODIFIES: this
     // EFFECTS: processes user input
     private void runCipher() {
-        String command = null;
-
+        String command;
         init();
         askForBlockSize();
 
@@ -26,17 +27,19 @@ public class CipherApp {
             displayOptions();
             command = input.next();
             if (command.equals("e")) {
-                handleMessage("e");
+                handleEncryption();
             } else if (command.equals("d")) {
-                handleMessage("d");
+                handleDecryption();
             } else if (command.equals("p")) {
                 handlePermutation();
-            } else if (command == "s") {
+            } else if (command.equals("s")) {
                 handleSubstitution();
-            } else if (command == "k") {
+            } else if (command.equals("k")) {
                 handleKey();
             } else if (command.equals("v")) {
                 displayCipherContents();
+            } else if (command.equals("q")) {
+                break;
             } else {
                 System.out.println("Please select an option from the list above.");
             }
@@ -84,5 +87,69 @@ public class CipherApp {
                 System.out.println("\t a permutation round");
             }
         }
+    }
+
+    // EFFECTS: encrypts the user's inputted plaintext with the cipher
+    private void handleEncryption() {
+        Byte[] plaintext = promptForMessage();
+        ArrayList<Byte[]> keys = promptForKeys();
+        Byte[] ciphertext = cipher.encryptByteArray(plaintext, keys);
+        System.out.println("Your encrypted message is: ");
+        for (Byte b : ciphertext) {
+            System.out.print(b + " ");
+        }
+        System.out.println();
+    }
+
+    // EFFECTS: decrypts the user's inputted ciphertext with the cipher
+    private void handleDecryption() {
+        Byte[] ciphertext = promptForMessage();
+        ArrayList<Byte[]> keys = promptForKeys();
+        Byte[] plaintext = cipher.encryptByteArray(ciphertext, keys);
+        System.out.println("Your decrypted message is: ");
+        for (Byte b : plaintext) {
+            System.out.print(b + " ");
+        }
+        System.out.println();
+    }
+
+    private void handlePermutation() {
+
+    }
+
+    private void handleSubstitution() {
+
+    }
+
+    private void handleKey() {
+
+    }
+
+    // EFFECTS: prompts user for message prior to encryption/decryption
+    private Byte[] promptForMessage() {
+        int blockSize = cipher.getBlockSize();
+        Byte[] plaintext = new Byte[blockSize];
+        System.out.println("Please enter your message as " + blockSize + " space-separated integers (bytes):");
+        for (int i = 0; i < blockSize; i++) {
+            plaintext[i] = input.nextByte();
+        }
+        return plaintext;
+    }
+
+    // EFFECTS: prompts user for keys prior to encryption/decryption
+    private ArrayList<Byte[]> promptForKeys() {
+        int blockSize = cipher.getBlockSize();
+        int numKeyRounds = cipher.getNumberOfKeyRounds();
+        ArrayList<Byte[]> keys = new ArrayList<>();
+        System.out.println("Please enter each key as " + numKeyRounds + " space-separated integers (bytes):");
+        for (int i = 0; i < numKeyRounds; i++) {
+            System.out.println("Key " + i + ":");
+            Byte[] currentKey = new Byte[blockSize];
+            for (int j = 0; j < blockSize; j++) {
+                currentKey[j] = input.nextByte();
+            }
+            keys.add(currentKey);
+        }
+        return keys;
     }
 }

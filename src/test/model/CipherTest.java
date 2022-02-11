@@ -195,4 +195,20 @@ class CipherTest {
 
         assertArrayEquals(plaintext, plaintext2);
     }
+
+    @Test
+    public void testGetNumberOfKeyRoundsNone(){
+        cipher.addRound(pround);
+        cipher.addRound(sround);
+        assertEquals(0, cipher.getNumberOfKeyRounds());
+    }
+
+    @Test
+    public void testGetNumberOfKeyRoundsTwo(){
+        cipher.addRound(kround2);
+        cipher.addRound(pround);
+        cipher.addRound(sround);
+        cipher.addRound(kround1);
+        assertEquals(2, cipher.getNumberOfKeyRounds());
+    }
 }

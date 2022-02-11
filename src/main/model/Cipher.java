@@ -62,6 +62,17 @@ public class Cipher {
         return currentBytes;
     }
 
+    // EFFECTS: returns the number of key rounds in the cipher
+    public int getNumberOfKeyRounds() {
+        int count = 0;
+        for (Round round : rounds) {
+            if (round instanceof MixKeyRound) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     // getters and setters
     public ArrayList<Round> getRounds() {
         return rounds;
