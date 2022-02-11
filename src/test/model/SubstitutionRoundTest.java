@@ -16,6 +16,7 @@ public class SubstitutionRoundTest {
     @Test
     public void testConstructor() {
         int[] mapping = round.getSubstitutionMapping();
+        assertEquals(16, mapping.length);
         for (int i = 0; i < 16; i++) {
             assertEquals(i, mapping[i]);
         }

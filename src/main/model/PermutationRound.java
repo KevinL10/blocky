@@ -1,48 +1,119 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 /*
 PermutationRound represents a round for rearranging the bits
 according to a certain mapping
  */
 public class PermutationRound implements Round {
+    private int[] mapping;
+    private int blockSize;
 
-    // REQUIRES: blockSize should be the same as the cipher's block size
-    // EFFECTS: constructs a permutation mapping of size blockSizeInBytes * 8
+    // REQUIRES: blockSize should be the same as the cipher's block size (in bytes)
+    // EFFECTS: constructs a permutation mapping of size blockSize * 8
     // initialized with the identity mapping (0 to 0, 1 to 1, etc.)
-    public PermutationRound(int blockSizeInBytes) {
-
+    public PermutationRound(int blockSize) {
+        this.blockSize = blockSize;
+        mapping = new int[blockSize * 8];
+        for (int i = 0; i < mapping.length; i++) {
+            mapping[i] = i;
+        }
     }
 
     @Override
     public Byte[] encryptRound(Byte[] inputBytes) {
-        return null;
+        String originalBits = "";
+        int[] permutatedBits = new int[blockSize * 8];
+        Byte[] output = new Byte[blockSize];
+
+        for (int i = 0; i < blockSize; i++) {
+            originalBits += convertByteToBits(inputBytes[i]);
+        }
+        for (int i = 0; i < originalBits.length(); i++) {
+            permutatedBits[mapping[i]] = originalBits.charAt(i) - '0';
+        }
+
+        // go through each byte, convert to a string
+        for (int i = 0; i < blockSize; i++) {
+            String currentByte = "";
+            for (int j = 0; j < 8; j++) {
+                currentByte += permutatedBits[8 * i + j];
+            }
+            output[i] = (byte) Integer.parseInt(currentByte, 2);
+        }
+        return output;
     }
 
     @Override
     public Byte[] decryptRound(Byte[] inputBytes) {
-        return null;
+        int[] inverseMapping = new int[16];
+        for (int i = 0; i < 16; i++) {
+            inverseMapping[mapping[i]] = i;
+        }
+        String originalBits = "";
+        int[] permutatedBits = new int[blockSize * 8];
+        Byte[] output = new Byte[blockSize];
+
+        for (int i = 0; i < blockSize; i++) {
+            originalBits += convertByteToBits(inputBytes[i]);
+        }
+        for (int i = 0; i < originalBits.length(); i++) {
+            permutatedBits[inverseMapping[i]] = originalBits.charAt(i) - '0';
+        }
+
+        // go through each byte, convert to a string
+        for (int i = 0; i < blockSize; i++) {
+            String currentByte = "";
+            for (int j = 0; j < 8; j++) {
+                currentByte += permutatedBits[8 * i + j];
+            }
+            output[i] = (byte) Integer.parseInt(currentByte, 2);
+        }
+        return output;
     }
 
     // MODIFIES: this
     // EFFECTS: randomizes the permutation mapping
     public void fillWithRandomPermutation() {
-
+        ArrayList<Integer> mappingAsList = new ArrayList<>();
+        for (int i = 0; i < blockSize * 8; i++) {
+            mappingAsList.add(i);
+        }
+        Collections.shuffle(mappingAsList);
+        for (int i = 0; i < blockSize * 8; i++) {
+            mapping[i] = mappingAsList.get(i);
+        }
     }
 
     // EFFECTS: return the bit of number at index (from left to right)
     public static int getBitByIndex(Byte number, int index) {
-        //return (number >> index) & 1;
-        return 0;
+        return (number >> (7 - index)) & 1;
     }
+
+    // EFFECTS: converts the byte to a binary string
+    public static String convertByteToBits(Byte b) {
+        String output = "";
+        for (int i = 7; i >= 0; i--) {
+            if (((b >> i) & 1) != 0) {
+                output += "1";
+            } else {
+                output += "0";
+            }
+        }
+        return output;
+    }
+
 
     // getters and setters
     // REQUIRES: mapping should have length blockSize * 8
     // EFFECTS: copies the *values* from given mapping into the round's mapping
     public void setPermutationMapping(int[] mapping) {
-
+        this.mapping = mapping.clone();
     }
 
     public int[] getPermutationMapping() {
-        return null;
+        return mapping;
     }
 }
