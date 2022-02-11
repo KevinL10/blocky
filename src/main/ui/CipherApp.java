@@ -87,39 +87,37 @@ public class CipherApp {
     // EFFECTS: displays the rounds of the cipher
     private void displayCipherContents() {
         System.out.println("Your cipher is made up of:");
+        System.out.println("-------------------------------------");
         for (Round round : cipher.getRounds()) {
             if (round instanceof MixKeyRound) {
-                System.out.println("\t a mix-key round");
+                System.out.println("|            mix-key round          |");
             } else if (round instanceof SubstitutionRound) {
-                System.out.println("\t a substitution round");
+                System.out.println("|         substitution round        |");
             } else if (round instanceof PermutationRound) {
-                System.out.println("\t a permutation round");
+                System.out.println("|          permutation round        |");
             }
+            System.out.println("-------------------------------------");
         }
     }
 
+    // MODIFIES: this
     // EFFECTS: encrypts the user's inputted plaintext with the cipher
     private void handleEncryption() {
         Byte[] plaintext = promptForMessage();
         ArrayList<Byte[]> keys = promptForKeys();
         Byte[] ciphertext = cipher.encryptByteArray(plaintext, keys);
         System.out.println("Your encrypted message is: ");
-        for (Byte b : ciphertext) {
-            System.out.print((b & 0xff) + " ");
-        }
-        System.out.println();
+        printByteArray(ciphertext);
     }
 
+    // MODIFIES: this
     // EFFECTS: decrypts the user's inputted ciphertext with the cipher
     private void handleDecryption() {
         Byte[] ciphertext = promptForMessage();
         ArrayList<Byte[]> keys = promptForKeys();
         Byte[] plaintext = cipher.decryptByteArray(ciphertext, keys);
         System.out.println("Your decrypted message is: ");
-        for (Byte b : plaintext) {
-            System.out.print((b & 0xff) + " ");
-        }
-        System.out.println();
+        printByteArray(plaintext);
     }
 
     // MODIFIES: this
@@ -143,6 +141,7 @@ public class CipherApp {
             round.fillWithRandomPermutation();
         } else {
             System.out.println("Sorry, that is not a valid choice.");
+            return;
         }
         cipher.addRound(round);
         System.out.println("Permutation round successfully added!");
@@ -168,11 +167,14 @@ public class CipherApp {
             round.fillWithRandomSubstitution();
         } else {
             System.out.println("Sorry, that is not a valid choice.");
+            return;
         }
         cipher.addRound(round);
         System.out.println("Substitution round successfully added!");
     }
 
+    // MODIFIES: this
+    // EFFECTS: adds a mix key round to the cipher
     private void handleKey() {
         int blockSize = cipher.getBlockSize();
         MixKeyRound round = new MixKeyRound(blockSize);
@@ -206,5 +208,13 @@ public class CipherApp {
             keys.add(currentKey);
         }
         return keys;
+    }
+
+    // EFFECTS: prints out the bytes in the bytearray as space-separated, unsigned values
+    private void printByteArray(Byte[] bytes) {
+        for (Byte b : bytes) {
+            System.out.print((b & 0xff) + " ");
+        }
+        System.out.println();
     }
 }

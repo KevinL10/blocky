@@ -54,8 +54,8 @@ public class PermutationRound implements Round {
     // EFFECTS: returns a decrypted bytearray by rearranging all plaintext bits
     // according to the inverse mapping
     public Byte[] decryptRound(Byte[] inputBytes) {
-        int[] inverseMapping = new int[16];
-        for (int i = 0; i < 16; i++) {
+        int[] inverseMapping = new int[blockSize * 8];
+        for (int i = 0; i < blockSize * 8; i++) {
             inverseMapping[mapping[i]] = i;
         }
         String originalBits = "";
