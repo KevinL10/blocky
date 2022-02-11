@@ -133,7 +133,8 @@ public class CipherApp {
         System.out.println("\t[c]: custom permutation");
         String choice = input.next();
         if (choice.equals("c")) {
-            System.out.println("Enter your permutation mapping as " + 8 * blockSize + " line-separated integers (bytes)");
+            System.out.println("Enter your permutation mapping as "
+                    + 8 * blockSize + " line-separated integers (bytes)");
             for (int i = 0; i < blockSize * 8; i++) {
                 mapping[i] = (byte) input.nextInt();
             }
