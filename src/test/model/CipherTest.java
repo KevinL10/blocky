@@ -60,7 +60,7 @@ class CipherTest {
         Byte[] expectedCiphertext = pround.encryptRound(plaintext);
         expectedCiphertext = sround.encryptRound(expectedCiphertext);
 
-        assertEquals(expectedCiphertext, ciphertext);
+        assertArrayEquals(expectedCiphertext, ciphertext);
     }
 
     @Test
@@ -81,7 +81,7 @@ class CipherTest {
         Byte[] expectedCiphertext = pround.encryptRound(plaintext);
         expectedCiphertext = kround1.encryptRound(expectedCiphertext);
         expectedCiphertext = sround.encryptRound(expectedCiphertext);
-        assertEquals(expectedCiphertext, ciphertext);
+        assertArrayEquals(expectedCiphertext, ciphertext);
     }
 
     @Test
@@ -107,7 +107,7 @@ class CipherTest {
         expectedCiphertext = kround1.encryptRound(expectedCiphertext);
         expectedCiphertext = sround.encryptRound(expectedCiphertext);
         expectedCiphertext = kround2.encryptRound(expectedCiphertext);
-        assertEquals(expectedCiphertext, ciphertext);
+        assertArrayEquals(expectedCiphertext, ciphertext);
     }
 
     @Test
@@ -123,7 +123,7 @@ class CipherTest {
         Byte[] expectedPlaintext = pround.decryptRound(ciphertext);
         expectedPlaintext = sround.decryptRound(expectedPlaintext);
 
-        assertEquals(expectedPlaintext, plaintext);
+        assertArrayEquals(expectedPlaintext, plaintext);
     }
 
     @Test
@@ -144,7 +144,7 @@ class CipherTest {
         Byte[] expectedPlaintext = pround.decryptRound(ciphertext);
         expectedPlaintext = kround1.decryptRound(expectedPlaintext);
         expectedPlaintext = sround.decryptRound(expectedPlaintext);
-        assertEquals(expectedPlaintext, plaintext);
+        assertArrayEquals(expectedPlaintext, plaintext);
     }
 
     @Test
@@ -170,6 +170,28 @@ class CipherTest {
         expectedPlaintext = kround1.decryptRound(expectedPlaintext);
         expectedPlaintext = sround.decryptRound(expectedPlaintext);
         expectedPlaintext = kround2.decryptRound(expectedPlaintext);
-        assertEquals(expectedPlaintext, plaintext);
+        assertArrayEquals(expectedPlaintext, plaintext);
+    }
+
+    @Test
+    public void testEncryptDecryptSuccessful() {
+        cipher.addRound(pround);
+        cipher.addRound(kround1);
+        cipher.addRound(sround);
+        cipher.addRound(kround2);
+
+        ArrayList<Byte[]> keys = new ArrayList<>();
+        Byte[] key1 = {(byte) 113, (byte) 140};
+        Byte[] key2 = {(byte) 31, (byte) 175};
+        keys.add(key1);
+        keys.add(key2);
+        kround1.setKey(key1);
+        kround2.setKey(key2);
+
+        Byte[] plaintext = {(byte) 192, (byte) 200};
+        Byte[] ciphertext = cipher.encryptByteArray(plaintext, keys);
+        Byte[] plaintext2 = cipher.decryptByteArray(ciphertext, keys);
+
+        assertArrayEquals(plaintext, plaintext2);
     }
 }
