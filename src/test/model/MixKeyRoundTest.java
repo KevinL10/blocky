@@ -18,6 +18,7 @@ public class MixKeyRoundTest {
     public void testConstructor() {
         // check that initial key contains BLOCK_SIZE null bytes
         Byte[] initialKey = round.getKey();
+        assertEquals(BLOCK_SIZE, initialKey.length);
         for (int i = 0; i < BLOCK_SIZE; i++) {
             assertEquals(0, (int) initialKey[i]);
         }
