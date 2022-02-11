@@ -119,18 +119,18 @@ class CipherTest {
         Byte[] ciphertext = {(byte) 231, (byte) 85};
         Byte[] plaintext = cipher.decryptByteArray(ciphertext, new ArrayList<>());
 
-        // should be equivalent to encrypting the rounds one-after-another
-        Byte[] expectedPlaintext = pround.decryptRound(ciphertext);
-        expectedPlaintext = sround.decryptRound(expectedPlaintext);
+        // should be equivalent to encrypting the rounds one-after-another (backwards)
+        Byte[] expectedPlaintext = sround.decryptRound(ciphertext);
+        expectedPlaintext = pround.decryptRound(expectedPlaintext);
 
         assertArrayEquals(expectedPlaintext, plaintext);
     }
 
     @Test
     public void testDecryptOneKeyRound() {
-        cipher.addRound(pround);
-        cipher.addRound(kround1);
         cipher.addRound(sround);
+        cipher.addRound(kround1);
+        cipher.addRound(pround);
 
         ArrayList<Byte[]> keys = new ArrayList<>();
         Byte[] key1 = {(byte) 113, (byte) 140};
@@ -140,10 +140,11 @@ class CipherTest {
         Byte[] ciphertext = {(byte) 231, (byte) 85};
         Byte[] plaintext = cipher.decryptByteArray(ciphertext, keys);
 
-        // should be equivalent to encrypting the rounds one-after-another
+        // should be equivalent to encrypting the rounds one-after-another (backwards)
         Byte[] expectedPlaintext = pround.decryptRound(ciphertext);
         expectedPlaintext = kround1.decryptRound(expectedPlaintext);
         expectedPlaintext = sround.decryptRound(expectedPlaintext);
+
         assertArrayEquals(expectedPlaintext, plaintext);
     }
 
@@ -165,11 +166,11 @@ class CipherTest {
         Byte[] ciphertext = {(byte) 192, (byte) 200};
         Byte[] plaintext = cipher.decryptByteArray(ciphertext, keys);
 
-        // should be equivalent to encrypting the rounds one-after-another
-        Byte[] expectedPlaintext = pround.decryptRound(ciphertext);
-        expectedPlaintext = kround1.decryptRound(expectedPlaintext);
+        // should be equivalent to encrypting the rounds one-after-another (backwards)
+        Byte[] expectedPlaintext = kround2.decryptRound(ciphertext);
         expectedPlaintext = sround.decryptRound(expectedPlaintext);
-        expectedPlaintext = kround2.decryptRound(expectedPlaintext);
+        expectedPlaintext = kround1.decryptRound(expectedPlaintext);
+        expectedPlaintext = pround.decryptRound(expectedPlaintext);
         assertArrayEquals(expectedPlaintext, plaintext);
     }
 

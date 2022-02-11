@@ -33,7 +33,7 @@ public class Cipher {
         for (Round round : rounds) {
             if (round instanceof MixKeyRound) {
                 ((MixKeyRound) round).setKey(keys.get(keyIndex));
-                keyIndex += 1;
+                keyIndex++;
             }
 
             currentBytes = round.encryptRound(currentBytes);
@@ -46,12 +46,15 @@ public class Cipher {
     // and each Byte[] should have length blockSize
     // EFFECTS: returns a decrypted byte-array of plaintext
     public Byte[] decryptByteArray(Byte[] ciphertext, ArrayList<Byte[]> keys) {
-        int keyIndex = 0;
+        int keyIndex = keys.size() - 1;
         Byte[] currentBytes = ciphertext.clone();
-        for (Round round : rounds) {
+
+        // go through the rounds backward (for decryption)
+        for (int i = rounds.size() - 1; i >= 0; i--) {
+            Round round = rounds.get(i);
             if (round instanceof MixKeyRound) {
                 ((MixKeyRound) round).setKey(keys.get(keyIndex));
-                keyIndex += 1;
+                keyIndex--;
             }
 
             currentBytes = round.decryptRound(currentBytes);
