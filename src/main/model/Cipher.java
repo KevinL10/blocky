@@ -1,11 +1,13 @@
 package model;
 
+import persistence.Writeable;
+
 import java.util.ArrayList;
 
 /*
 Represents the cipher as a sequence of individual Rounds, each with size blockSize
  */
-public class Cipher {
+public class Cipher implements Writeable {
     private ArrayList<Round> rounds;
     private int blockSize;
 

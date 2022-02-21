@@ -1,9 +1,11 @@
 package model;
 
+import persistence.Writeable;
+
 /*
 MixKeyRound represents a round for mixing in the key using XOR on each bit
  */
-public class MixKeyRound implements Round {
+public class MixKeyRound implements Round, Writeable {
     private Byte[] key;
     private int blockSize;
 

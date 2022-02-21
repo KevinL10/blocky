@@ -1,5 +1,7 @@
 package model;
 
+import persistence.Writeable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,7 +10,7 @@ import java.util.Collections;
 PermutationRound represents a round for substituting 4-bit blocks
 with a corresponding 4-bit value
  */
-public class SubstitutionRound implements Round {
+public class SubstitutionRound implements Round, Writeable {
     private int[] mapping;
     private int blockSize;
 

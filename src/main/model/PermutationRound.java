@@ -1,5 +1,7 @@
 package model;
 
+import persistence.Writeable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -7,7 +9,7 @@ import java.util.Collections;
 PermutationRound represents a round for rearranging the bits
 according to a certain mapping
  */
-public class PermutationRound implements Round {
+public class PermutationRound implements Round, Writeable {
     private int[] mapping;
     private int blockSize;
 
