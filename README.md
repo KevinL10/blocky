@@ -1,4 +1,4 @@
-# Cipher
+# Blocky
 
 An interactive, hands-on application for building block ciphers round by round.
 
@@ -19,8 +19,14 @@ When I first came across cryptography, I found the whole idea of encryption fasc
 
 ### User Stories
 As a user, I want to be able to:
+
+#### Phase 1
 - add custom rounds to an existing cipher
 - choose the type of round and relevant mappings
 - view the rounds of a cipher
 - encrypt data with an existing cipher
 - decrypt data with an existing cipher
+
+#### Phase 2
+- save all components (rounds, blocksize) of a cipher to a file
+- choose between "create" or "load existing" cipher on start

@@ -78,7 +78,7 @@ public class SubstitutionRoundTest {
             containsN[mapping[i]] = true;
         }
 
-        for(int i = 0; i < 16; i++){
+        for (int i = 0; i < 16; i++) {
             assertTrue(containsN[i]);
         }
     }
@@ -91,7 +91,7 @@ public class SubstitutionRoundTest {
         // check that the mapping is randomized (different from identity permutation)
         boolean isRandomized = false;
         for (int i = 0; i < 16; i++) {
-            if(mapping[i] != i){
+            if (mapping[i] != i) {
                 isRandomized = true;
                 break;
             }
