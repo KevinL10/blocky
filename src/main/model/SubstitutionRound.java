@@ -1,5 +1,6 @@
 package model;
 
+import org.json.JSONObject;
 import persistence.Writeable;
 
 import java.util.ArrayList;
@@ -79,6 +80,11 @@ public class SubstitutionRound implements Round, Writeable {
         for (int i = 0; i < 16; i++) {
             mapping[i] = mappingAsList.get(i);
         }
+    }
+
+    @Override
+    public JSONObject toJson() {
+        return null;
     }
 
     // getters and setters

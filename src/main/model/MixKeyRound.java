@@ -1,5 +1,6 @@
 package model;
 
+import org.json.JSONObject;
 import persistence.Writeable;
 
 /*
@@ -37,6 +38,11 @@ public class MixKeyRound implements Round, Writeable {
     public Byte[] decryptRound(Byte[] inputBytes) {
         // decryption and encryption are equivalent for XOR
         return encryptRound(inputBytes);
+    }
+
+    @Override
+    public JSONObject toJson() {
+        return null;
     }
 
     // getters and setters

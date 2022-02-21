@@ -1,5 +1,6 @@
 package model;
 
+import org.json.JSONObject;
 import persistence.Writeable;
 
 import java.util.ArrayList;
@@ -74,6 +75,16 @@ public class Cipher implements Writeable {
             }
         }
         return keyRoundNum;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        return null;
+    }
+
+    // EFFECTS: returns rounds in this cipher as a JSON array
+    public JSONObject roundsToJson() {
+        return null;
     }
 
     // getters and setters

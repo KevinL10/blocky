@@ -1,5 +1,6 @@
 package model;
 
+import org.json.JSONObject;
 import persistence.Writeable;
 
 import java.util.ArrayList;
@@ -113,6 +114,10 @@ public class PermutationRound implements Round, Writeable {
         return output;
     }
 
+    @Override
+    public JSONObject toJson() {
+        return null;
+    }
 
     // getters and setters
     // REQUIRES: mapping should have length blockSize * 8
