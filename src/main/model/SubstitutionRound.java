@@ -1,5 +1,6 @@
 package model;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writeable;
 
@@ -84,7 +85,10 @@ public class SubstitutionRound implements Round, Writeable {
 
     @Override
     public JSONObject toJson() {
-        return null;
+        JSONObject json = new JSONObject();
+        json.put("type", "Substitution");
+        json.put("mapping", new JSONArray(mapping));
+        return json;
     }
 
     // getters and setters

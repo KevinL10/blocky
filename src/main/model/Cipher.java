@@ -1,5 +1,6 @@
 package model;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writeable;
 
@@ -79,12 +80,19 @@ public class Cipher implements Writeable {
 
     @Override
     public JSONObject toJson() {
-        return null;
+        JSONObject json = new JSONObject();
+        json.put("blockSize", blockSize);
+        json.put("rounds", roundsToJson());
+        return json;
     }
 
     // EFFECTS: returns rounds in this cipher as a JSON array
-    public JSONObject roundsToJson() {
-        return null;
+    public JSONArray roundsToJson() {
+        JSONArray jsonArray = new JSONArray();
+        for (Round r : rounds) {
+            jsonArray.put(r.toJson());
+        }
+        return jsonArray;
     }
 
     // getters and setters

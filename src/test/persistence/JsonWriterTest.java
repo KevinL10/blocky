@@ -96,13 +96,13 @@ public class JsonWriterTest extends JsonTest {
     @Test
     void testWriterMultipleOfEachRound(){
         try {
-            JsonWriter writer = new JsonWriter("./data/testWriterOneOfEachRound.json");
+            JsonWriter writer = new JsonWriter("./data/testWriterMultipleOfEachRound.json");
             writer.open();
             writer.write(createMultipleOfEachRoundCipher());
             writer.close();
 
             // check that the written rounds in Json are the correct rounds
-            JsonReader reader = new JsonReader("./data/testWriterOneOfEachRound.json");
+            JsonReader reader = new JsonReader("./data/testWriterMultipleOfEachRound.json");
             Cipher cipher = reader.read();
             ArrayList<Round> rounds = cipher.getRounds();
             assertEquals(3, cipher.getBlockSize());

@@ -42,7 +42,9 @@ public class MixKeyRound implements Round, Writeable {
 
     @Override
     public JSONObject toJson() {
-        return null;
+        JSONObject json = new JSONObject();
+        json.put("type", "MixKey");
+        return json;
     }
 
     // getters and setters
