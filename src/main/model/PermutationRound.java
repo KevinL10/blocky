@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import persistence.Writeable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 /*
@@ -123,6 +124,18 @@ public class PermutationRound implements Round, Writeable {
         return json;
     }
 
+    @Override
+    // EFFECTS: returns true if given object is a permutation round with the same mapping and blockSize
+    public boolean equals(Object o) {
+        if (!(o instanceof PermutationRound)) {
+            return false;
+        }
+        PermutationRound pround = (PermutationRound) o;
+        int blockSize = pround.getBlockSize();
+        int[] mapping = pround.getPermutationMapping();
+        return Arrays.equals(mapping, this.mapping) && blockSize == this.blockSize;
+    }
+
     // getters and setters
     // REQUIRES: mapping should have length blockSize * 8
     // EFFECTS: copies the *values* from given mapping into the round's mapping
@@ -132,5 +145,9 @@ public class PermutationRound implements Round, Writeable {
 
     public int[] getPermutationMapping() {
         return mapping;
+    }
+
+    public int getBlockSize() {
+        return blockSize;
     }
 }

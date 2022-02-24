@@ -47,6 +47,14 @@ public class MixKeyRound implements Round, Writeable {
         return json;
     }
 
+    @Override
+    // EFFECTS: returns true if the compared object is also a MixKeyRound and same block size
+    // two MixKeyRounds are equivalent even if their internal keys are different
+    public boolean equals(Object o) {
+        int blockSize = ((MixKeyRound) o).blockSize;
+        return (o instanceof MixKeyRound) && blockSize == this.blockSize;
+    }
+
     // getters and setters
     public void setKey(Byte[] key) {
         this.key = key.clone();
@@ -54,5 +62,9 @@ public class MixKeyRound implements Round, Writeable {
 
     public Byte[] getKey() {
         return key;
+    }
+
+    public int getBlockSize() {
+        return blockSize;
     }
 }

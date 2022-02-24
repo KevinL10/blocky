@@ -91,6 +91,17 @@ public class SubstitutionRound implements Round, Writeable {
         return json;
     }
 
+    @Override
+    // EFFECTS: returns true if given object is a substitution round with the same mapping and blockSize
+    public boolean equals(Object o) {
+        if (!(o instanceof SubstitutionRound)) {
+            return false;
+        }
+        SubstitutionRound sround = (SubstitutionRound) o;
+        int blockSize = sround.getBlockSize();
+        int[] mapping = sround.getSubstitutionMapping();
+        return Arrays.equals(mapping, this.mapping) && blockSize == this.blockSize;
+    }
     // getters and setters
 
     // REQUIRES: mapping should have size 16 and uniquely contain the numbers 0-15
@@ -102,5 +113,9 @@ public class SubstitutionRound implements Round, Writeable {
 
     public int[] getSubstitutionMapping() {
         return mapping;
+    }
+
+    public int getBlockSize(){
+        return blockSize;
     }
 }
