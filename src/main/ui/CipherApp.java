@@ -63,7 +63,6 @@ public class CipherApp {
         } else if (command.equals("c")) {
             promptBlockSize();
         } else {
-            System.out.println("Please select an option from the list above.");
             throw new StartMenuException();
         }
     }

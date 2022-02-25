@@ -7,14 +7,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SubstitutionRoundTest {
     SubstitutionRound round;
-
+    private final int BLOCK_SIZE = 2;
+    private final int[] mapping = {2, 4, 13, 0, 8, 10, 1, 11, 12, 3, 6, 9, 7, 5, 14, 15};
+    // mapping such that mapping[inverseMapping[a]] = a;
+    private final int[] inverseMapping = {3, 6, 0, 9, 1, 13, 10, 12, 4, 11, 5, 7, 8, 2, 14, 15};
     @BeforeEach
     public void runBefore() {
-        round = new SubstitutionRound(2);
+        round = new SubstitutionRound(BLOCK_SIZE);
     }
 
     @Test
     public void testConstructor() {
+        assertEquals(BLOCK_SIZE, round.getBlockSize());
         int[] mapping = round.getSubstitutionMapping();
         assertEquals(16, mapping.length);
         for (int i = 0; i < 16; i++) {
@@ -24,7 +28,7 @@ public class SubstitutionRoundTest {
 
     @Test
     public void testEncryptRound() {
-        int[] mapping = {2, 4, 13, 0, 8, 10, 1, 11, 12, 3, 6, 9, 7, 5, 14, 15};
+
         round.setSubstitutionMapping(mapping);
 
         Byte[] plaintext = {(byte) 168, (byte) 42};
@@ -44,10 +48,6 @@ public class SubstitutionRoundTest {
 
     @Test
     public void testDecryptRound() {
-        int[] mapping = {2, 4, 13, 0, 8, 10, 1, 11, 12, 3, 6, 9, 7, 5, 14, 15};
-        // mapping such that mapping[inverseMapping[a]] = a;
-        int[] inverseMapping = {3, 6, 0, 9, 1, 13, 10, 12, 4, 11, 5, 7, 8, 2, 14, 15};
-
         round.setSubstitutionMapping(mapping);
 
         Byte[] ciphertext = {(byte) 168, (byte) 42};
@@ -98,5 +98,28 @@ public class SubstitutionRoundTest {
         }
 
         assertTrue(isRandomized);
+    }
+
+    @Test
+    public void testEqualsDifferentObject() {
+        PermutationRound round2 = new PermutationRound(BLOCK_SIZE);
+        assertNotEquals(round, round2);
+    }
+
+    @Test
+    public void testEqualsDifferentMapping() {
+        SubstitutionRound round2 = new SubstitutionRound(BLOCK_SIZE);
+        round.setSubstitutionMapping(mapping);
+        round2.setSubstitutionMapping(inverseMapping);
+        assertNotEquals(round, round2);
+    }
+
+
+    @Test
+    public void testEqualsSameMapping() {
+        SubstitutionRound round2 = new SubstitutionRound(BLOCK_SIZE);
+        round.setSubstitutionMapping(mapping);
+        round2.setSubstitutionMapping(mapping);
+        assertEquals(round, round2);
     }
 }

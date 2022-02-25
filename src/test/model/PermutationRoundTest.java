@@ -3,8 +3,7 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PermutationRoundTest {
     PermutationRound round;
@@ -20,6 +19,7 @@ public class PermutationRoundTest {
     @Test
     public void testConstructor() {
         int[] mapping = round.getPermutationMapping();
+        assertEquals(BLOCK_SIZE, round.getBlockSize());
         // check that mapping is initialized with identity permutation
         assertEquals(mapping.length, BLOCK_SIZE * 8);
         for (int i = 0; i < mapping.length; i++) {
@@ -106,8 +106,31 @@ public class PermutationRoundTest {
     }
 
     @Test
-    public void testConvertByteToBits(){
+    public void testConvertByteToBits() {
         assertEquals("11010010", PermutationRound.convertByteToBits((byte) 210));
         assertEquals("01000001", PermutationRound.convertByteToBits((byte) 65));
+    }
+
+    @Test
+    public void testEqualsDifferentObject() {
+        SubstitutionRound round2 = new SubstitutionRound(BLOCK_SIZE);
+        assertNotEquals(round, round2);
+    }
+
+    @Test
+    public void testEqualsDifferentMapping() {
+        PermutationRound round2 = new PermutationRound(BLOCK_SIZE);
+        round.setPermutationMapping(mapping1);
+        round2.setPermutationMapping(inverseMapping1);
+        assertNotEquals(round, round2);
+    }
+
+
+    @Test
+    public void testEqualsSameMapping() {
+        PermutationRound round2 = new PermutationRound(BLOCK_SIZE);
+        round.setPermutationMapping(mapping1);
+        round2.setPermutationMapping(mapping1);
+        assertEquals(round, round2);
     }
 }

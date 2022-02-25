@@ -51,8 +51,11 @@ public class MixKeyRound implements Round, Writeable {
     // EFFECTS: returns true if the compared object is also a MixKeyRound and same block size
     // two MixKeyRounds are equivalent even if their internal keys are different
     public boolean equals(Object o) {
+        if (!(o instanceof MixKeyRound)) {
+            return false;
+        }
         int blockSize = ((MixKeyRound) o).blockSize;
-        return (o instanceof MixKeyRound) && blockSize == this.blockSize;
+        return blockSize == this.blockSize;
     }
 
     // getters and setters

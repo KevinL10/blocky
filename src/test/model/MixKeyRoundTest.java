@@ -19,6 +19,7 @@ public class MixKeyRoundTest {
         // check that initial key contains BLOCK_SIZE null bytes
         Byte[] initialKey = round.getKey();
         assertEquals(BLOCK_SIZE, initialKey.length);
+        assertEquals(BLOCK_SIZE, round.getBlockSize());
         for (int i = 0; i < BLOCK_SIZE; i++) {
             assertEquals(0, (int) initialKey[i]);
         }
@@ -46,5 +47,25 @@ public class MixKeyRoundTest {
 
         assertEquals((int) plaintext[0], testKey[0] ^ encrypted[0]);
         assertEquals((int) plaintext[1], testKey[1] ^ encrypted[1]);
+    }
+
+    @Test
+    public void testEqualsSameBlocksize() {
+        MixKeyRound round2 = new MixKeyRound(BLOCK_SIZE);
+        Byte[] testKey = {(byte) 230, (byte) 125};
+        round2.setKey(testKey);
+        assertEquals(round, round2);
+    }
+
+    @Test
+    public void testEqualsDifferentBlocksize() {
+        MixKeyRound round2 = new MixKeyRound(BLOCK_SIZE + 1);
+        assertNotEquals(round, round2);
+    }
+
+    @Test
+    public void testEqualsDifferentObjects() {
+        SubstitutionRound round2 = new SubstitutionRound(BLOCK_SIZE);
+        assertNotEquals(round, round2);
     }
 }
