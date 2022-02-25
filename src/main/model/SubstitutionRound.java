@@ -115,7 +115,7 @@ public class SubstitutionRound implements Round, Writeable {
         return mapping;
     }
 
-    public int getBlockSize(){
+    public int getBlockSize() {
         return blockSize;
     }
 }

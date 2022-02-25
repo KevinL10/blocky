@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 // referenced JsonSerializationDemo
-public class JsonReaderTest extends JsonTest {
+public class JsonReaderTest {
     static final int[] sroundMapping = {5, 9, 6, 8, 1, 2, 15, 11, 13, 0, 12, 7, 10, 3, 14, 4};
     static final int[] proundMapping = {2, 4, 13, 0, 8, 10, 1, 11, 12, 3, 6, 9, 7, 5, 14, 15};
 
@@ -123,7 +123,7 @@ public class JsonReaderTest extends JsonTest {
 
     @Test
     void testReaderMultipleOfEachRound() {
-        JsonReader reader = new JsonReader("./data/testReaderMultipleOfEachRound  .json");
+        JsonReader reader = new JsonReader("./data/testReaderMultipleOfEachRound.json");
         try {
             Cipher cipher = reader.read();
             assertEquals(2, cipher.getBlockSize());

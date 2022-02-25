@@ -4,7 +4,6 @@ import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.awt.image.Kernel;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -12,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 // referenced JsonSerializationDemo
-public class JsonWriterTest extends JsonTest {
+public class JsonWriterTest {
     SubstitutionRound sround;
     PermutationRound pround;
     MixKeyRound kround;
