@@ -116,6 +116,14 @@ public class SubstitutionRoundTest {
 
 
     @Test
+    public void testEqualsDifferentBlocksize() {
+        SubstitutionRound round2 = new SubstitutionRound(BLOCK_SIZE + 1);
+        round.setSubstitutionMapping(mapping);
+        round2.setSubstitutionMapping(mapping);
+        assertNotEquals(round, round2);
+    }
+
+    @Test
     public void testEqualsSameMapping() {
         SubstitutionRound round2 = new SubstitutionRound(BLOCK_SIZE);
         round.setSubstitutionMapping(mapping);

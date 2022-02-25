@@ -125,6 +125,13 @@ public class PermutationRoundTest {
         assertNotEquals(round, round2);
     }
 
+    @Test
+    public void testEqualsDifferentBlocksize() {
+        PermutationRound round2 = new PermutationRound(BLOCK_SIZE - 1);
+        round.setPermutationMapping(mapping1);
+        round2.setPermutationMapping(mapping1);
+        assertNotEquals(round, round2);
+    }
 
     @Test
     public void testEqualsSameMapping() {
