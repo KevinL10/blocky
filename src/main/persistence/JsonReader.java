@@ -62,7 +62,7 @@ public class JsonReader {
                 addMixKey(cipher, roundJson);
             } else if (type.equals("Permutation")) {
                 addPermutation(cipher, roundJson);
-            } else if (type.equals("Substitution")) {
+            } else {
                 addSubstitution(cipher, roundJson);
             }
         }
@@ -91,13 +91,13 @@ public class JsonReader {
     // MODIFIES: cipher
     // EFFECTS: parses PermutationRound from JSON and adds to cipher's rounds
     private void addPermutation(Cipher cipher, JSONObject jsonObject) {
-        PermutationRound sround = new PermutationRound(cipher.getBlockSize());
+        PermutationRound pround = new PermutationRound(cipher.getBlockSize());
         JSONArray mappingJson = jsonObject.getJSONArray("mapping");
         int[] mapping = new int[mappingJson.length()];
         for (int i = 0; i < mappingJson.length(); i++) {
             mapping[i] = mappingJson.getInt(i);
         }
-        sround.setPermutationMapping(mapping);
-        cipher.addRound(sround);
+        pround.setPermutationMapping(mapping);
+        cipher.addRound(pround);
     }
 }
