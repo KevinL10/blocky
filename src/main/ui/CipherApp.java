@@ -1,9 +1,9 @@
 package ui;
 
-import exceptions.StartMenuException;
 import model.*;
 import persistence.JsonReader;
 import persistence.JsonWriter;
+import ui.exceptions.StartMenuException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
