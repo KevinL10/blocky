@@ -1,10 +1,19 @@
 package ui;
 
+import jdk.nashorn.internal.scripts.JO;
 import model.Cipher;
+import model.MixKeyRound;
+import model.PermutationRound;
+import model.SubstitutionRound;
+import persistence.JsonReader;
+import persistence.JsonWriter;
+import ui.exceptions.StartMenuException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class CipherUI extends JFrame {
@@ -12,6 +21,8 @@ public class CipherUI extends JFrame {
     public static final int HEIGHT = 700;
 
     private Cipher cipher;
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
 
     public CipherUI() {
         super("Cipher Creator");
@@ -27,10 +38,27 @@ public class CipherUI extends JFrame {
 
         addButtons();
         addMenuBar();
+        //addCipherFrame();
+
+        JPanel j = new JPanel();
+        j.add(new JButton("ABCD"));
+        add(j, BorderLayout.EAST);
+        j.setSize(100, 100);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: creates a JInternalFrame for the cipher
+    private void addCipherFrame() {
+        JInternalFrame in = new JInternalFrame();
+        in.setTitle("cipher frame");
+
+        in.reshape(0, 0, 50, 50);
+        in.setVisible(true);
+        add(in);
     }
 
     // MODIFIES: this
@@ -39,6 +67,7 @@ public class CipherUI extends JFrame {
         cipher = new Cipher(2);
     }
 
+    // ,...
     private void addMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
@@ -47,8 +76,23 @@ public class CipherUI extends JFrame {
         fileMenu.add(new SaveCipher());
         menuBar.add(fileMenu);
 
-        JMenu helpMenu = new JMenu("Help");
-        menuBar.add(helpMenu);
+        JMenu addMenu = new JMenu("Add");
+        addMenu.add(new AddKeyRound());
+        addMenu.add(new AddSubstitutionRound());
+        addMenu.add(new AddPermutationRound());
+        menuBar.add(addMenu);
+
+        // code taken from https://stackoverflow.com/questions/45433871/swing-last-
+        // jmenuitem-occupy-the-rest-of-space-on-jmenubar
+        menuBar.add(new JMenuItem(new InfoMenu()) {
+            @Override
+            public Dimension getMaximumSize() {
+                Dimension d1 = super.getPreferredSize();
+                Dimension d2 = super.getMaximumSize();
+                d2.width = d1.width;
+                return d2;
+            }
+        });
 
         setJMenuBar(menuBar);
     }
@@ -62,7 +106,20 @@ public class CipherUI extends JFrame {
         buttons.add(new JButton(new EncryptMessage()));
         buttons.add(new JButton(new DecryptMessage()));
 
+        JLabel label = new JLabel("substitution");
+        label.setBounds(150, 100, 50, 50);
+        buttons.add(label);
         add(buttons);
+
+        /*
+        JPanel panel2 = new JPanel();
+        panel2.add(new JButton(new AddRound()));
+
+        JPanel container = new JPanel();
+        container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
+
+
+        add(panel2);*/
     }
 
     /**
@@ -120,9 +177,20 @@ public class CipherUI extends JFrame {
             super("Load");
         }
 
+        // EFFECTS....
         @Override
         public void actionPerformed(ActionEvent evt) {
-            JOptionPane.showMessageDialog(null, "Loading cipher...");
+            String filepath = JOptionPane.showInputDialog("Filepath: ");
+            jsonWriter = new JsonWriter(filepath);
+            jsonReader = new JsonReader(filepath);
+            try {
+                cipher = jsonReader.read();
+                JOptionPane.showMessageDialog(null, "Loaded cipher with block size "
+                        + cipher.getBlockSize() + "!");
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Unable to read from file: "
+                        + filepath);
+            }
         }
     }
 
@@ -138,7 +206,85 @@ public class CipherUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            JOptionPane.showMessageDialog(null, "Saving cipher...");
+            String filepath = JOptionPane.showInputDialog("Filepath: ");
+            jsonWriter = new JsonWriter(filepath);
+            jsonReader = new JsonReader(filepath);
+            try {
+                jsonWriter.open();
+                jsonWriter.write(cipher);
+                jsonWriter.close();
+                JOptionPane.showMessageDialog(null, "Saved cipher with block size "
+                        + cipher.getBlockSize() + "!");
+            } catch (FileNotFoundException e) {
+                JOptionPane.showMessageDialog(null, "Unable to write to file: "
+                        + filepath);
+            }
+        }
+    }
+
+    /**
+     * Represents action to be taken when user wants to open the help popup
+     */
+    private class InfoMenu extends AbstractAction {
+
+        InfoMenu() {
+            super("Info");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            // image taken from https://www.techtarget.com/searchsecurity/definition/block-cipher
+            ImageIcon img = new ImageIcon("./data/block_cipher.png");
+            JOptionPane.showMessageDialog(null, "", "Info",
+                    JOptionPane.INFORMATION_MESSAGE, img);
+        }
+    }
+
+    /**
+     * Represents action to be taken when user wants to add a key round
+     */
+    private class AddKeyRound extends AbstractAction {
+
+        AddKeyRound() {
+            super("Key Round");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            cipher.addRound(new MixKeyRound(cipher.getBlockSize()));
+            JOptionPane.showMessageDialog(null, "Added Mix Key Round");
+        }
+    }
+
+    /**
+     * Represents action to be taken when user wants to add a substitution round
+     */
+    private class AddSubstitutionRound extends AbstractAction {
+
+        AddSubstitutionRound() {
+            super("Substitution Round");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            SubstitutionRound round = new SubstitutionRound(cipher.getBlockSize());
+            JOptionPane.showMessageDialog(null, "Added Substitution Round");
+        }
+    }
+
+    /**
+     * Represents action to be taken when user wants to add a permutation round
+     */
+    private class AddPermutationRound extends AbstractAction {
+
+        AddPermutationRound() {
+            super("Permutation Round");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            PermutationRound round = new PermutationRound(cipher.getBlockSize());
+            JOptionPane.showMessageDialog(null, "Added Permutation Round");
         }
     }
 }
