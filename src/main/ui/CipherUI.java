@@ -37,7 +37,6 @@ public class CipherUI extends JFrame {
         cipher = new Cipher(2);
     }
 
-
     // MODIFIES: this
     // EFFECTS:  draws the Cipher JFrame Window
     private void initializeGraphics() {
@@ -61,7 +60,6 @@ public class CipherUI extends JFrame {
         setVisible(true);
     }
 
-    // MODIFIES: this
     // EFFECTS: creates a new JPanel for the cipher round display
     private JPanel createCipherPanel() {
         JPanel cipherPanel = new JPanel();
@@ -90,7 +88,7 @@ public class CipherUI extends JFrame {
     }
 
 
-    // ,...
+    // EFFECTS: creates a menu bar consisting of "File", "Add", and "Info" options
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
@@ -124,10 +122,8 @@ public class CipherUI extends JFrame {
     // EFFECTS: creates and adds a JPanel for encrypt and decrypt buttons
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel();
-
         buttonPanel.add(new JButton(new EncryptMessage()));
         buttonPanel.add(new JButton(new DecryptMessage()));
-
         return buttonPanel;
     }
 
@@ -146,30 +142,18 @@ public class CipherUI extends JFrame {
             // taken from https://stackoverflow.com/questions/6555040/multiple-input-in-joptionpane-showinputdialog
             JTextField message = new JTextField();
             ArrayList<JTextField> keyFields = new ArrayList<>();
+            Object[] input = createMessageObject(message, keyFields);
 
-            int numOfKeys = cipher.getNumberOfKeyRounds();
-            Object[] input = new Object[2 + numOfKeys * 2];
-            input[0] = "Message:";
-            input[1] = message;
-            for (int i = 2; i < 2 + numOfKeys * 2; i += 2) {
-                JTextField key = new JTextField();
-                input[i] = "Key " + Integer.toString(i) + ":";
-                input[i + 1] = key;
-                keyFields.add(key);
-            }
-
-            ArrayList<Byte[]> keys = new ArrayList<>();
             int option = JOptionPane.showConfirmDialog(null, input,
                     "Encrypt Message", JOptionPane.OK_CANCEL_OPTION);
             if (option == JOptionPane.OK_OPTION) {
-                for (JTextField next : keyFields) {
-                    String[] keyBytes = next.getText().split(" ");
-                    keys.add(stringArrayToByteArray(keyBytes));
-                }
+                ArrayList<Byte[]> keys = new ArrayList<>();
+                Byte[] messageToEncrypt;
 
-                String[] messageString = message.getText().split(" ");
-                Byte[] messageBytes = stringArrayToByteArray(messageString);
-                Byte[] encryptedMessage = cipher.encryptByteArray(messageBytes, keys);
+                getKeysFromFields(keyFields, keys);
+                messageToEncrypt = stringArrayToByteArray(message.getText().split(" "));
+
+                Byte[] encryptedMessage = cipher.encryptByteArray(messageToEncrypt, keys);
                 JOptionPane.showMessageDialog(null, byteArrayToString(encryptedMessage));
             }
         }
@@ -184,42 +168,41 @@ public class CipherUI extends JFrame {
             super("Decrypt");
         }
 
-
-        // TODO: actually make things object-oriented
+        // add effects...
         @Override
         public void actionPerformed(ActionEvent evt) {
             // taken from https://stackoverflow.com/questions/6555040/multiple-input-in-joptionpane-showinputdialog
             JTextField message = new JTextField();
             ArrayList<JTextField> keyFields = new ArrayList<>();
 
-            int numOfKeys = cipher.getNumberOfKeyRounds();
-            Object[] input = new Object[2 + numOfKeys * 2];
-            input[0] = "Message:";
-            input[1] = message;
-            for (int i = 2; i < 2 + numOfKeys * 2; i += 2) {
-                JTextField key = new JTextField();
-                input[i] = "Key " + Integer.toString(i) + ":";
-                input[i + 1] = key;
-                keyFields.add(key);
-            }
+            Object[] input = createMessageObject(message, keyFields);
 
-            ArrayList<Byte[]> keys = new ArrayList<>();
             int option = JOptionPane.showConfirmDialog(null, input,
                     "Decrypt Message", JOptionPane.OK_CANCEL_OPTION);
-            if (option == JOptionPane.OK_OPTION) {
-                for (JTextField next : keyFields) {
-                    String[] keyBytes = next.getText().split(" ");
-                    keys.add(stringArrayToByteArray(keyBytes));
-                }
 
-                String[] messageString = message.getText().split(" ");
-                Byte[] messageBytes = stringArrayToByteArray(messageString);
-                Byte[] encryptedMessage = cipher.decryptByteArray(messageBytes, keys);
-                JOptionPane.showMessageDialog(null, byteArrayToString(encryptedMessage));
+            if (option == JOptionPane.OK_OPTION) {
+                ArrayList<Byte[]> keys = new ArrayList<>();
+                Byte[] messageToEncrypt;
+
+                getKeysFromFields(keyFields, keys);
+                messageToEncrypt = stringArrayToByteArray(message.getText().split(" "));
+
+                Byte[] decryptedMessage = cipher.decryptByteArray(messageToEncrypt, keys);
+                JOptionPane.showMessageDialog(null, byteArrayToString(decryptedMessage));
             }
         }
     }
 
+    // MODIFIES: keys
+    // EFFECTS: adds each JTextField in keyFields to keys as a byte array
+    private void getKeysFromFields(ArrayList<JTextField> keyFields, ArrayList<Byte[]> keys) {
+        for (JTextField next : keyFields) {
+            String[] keyBytes = next.getText().split(" ");
+            keys.add(stringArrayToByteArray(keyBytes));
+        }
+    }
+
+    // EFFECTS: converts each string in the input array to a byte value
     public Byte[] stringArrayToByteArray(String[] input) {
         Byte[] output = new Byte[input.length];
         for (int i = 0; i < input.length; i++) {
@@ -228,12 +211,20 @@ public class CipherUI extends JFrame {
         return output;
     }
 
-    public String byteArrayToString(Byte[] input) {
-        String output = "";
-        for (Byte b : input) {
-            output += (b & 0xff) + " ";
+    // MODIFIES: message, keyFields
+    // EFFECTS: constructs an object for encryption/decryption that asks for a message and list of keys
+    private Object[] createMessageObject(JTextField message, ArrayList<JTextField> keyFields) {
+        int numOfKeys = cipher.getNumberOfKeyRounds();
+        Object[] input = new Object[2 + numOfKeys * 2];
+        input[0] = "Message:";
+        input[1] = message;
+        for (int i = 1; i <= numOfKeys; i++) {
+            JTextField key = new JTextField();
+            input[2 * i] = "Key " + Integer.toString(i) + ":";
+            input[2 * i + 1] = key;
+            keyFields.add(key);
         }
-        return output;
+        return input;
     }
 
     /**
@@ -301,7 +292,7 @@ public class CipherUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            // image taken from https://www.techtarget.com/searchsecurity/definition/block-cipher
+            // Image source: https://www.techtarget.com/searchsecurity/definition/block-cipher
             ImageIcon img = new ImageIcon("./data/block_cipher.png");
             JOptionPane.showMessageDialog(null, "", "Info",
                     JOptionPane.INFORMATION_MESSAGE, img);
@@ -343,6 +334,7 @@ public class CipherUI extends JFrame {
             if (input == 0) {
                 round.fillWithRandomSubstitution();
                 addRoundLabel("Substitution Round");
+                cipher.addRound(round);
                 JOptionPane.showMessageDialog(null, "Added random substitution round");
             } else if (input == 1) {
                 int[] mapping = new int[16];
@@ -353,8 +345,8 @@ public class CipherUI extends JFrame {
                     System.out.println(mapping[i]);
                 }
                 round.setSubstitutionMapping(mapping);
-
                 addRoundLabel("Substitution Round");
+                cipher.addRound(round);
                 JOptionPane.showMessageDialog(null, "Added substitution round");
             }
         }
@@ -378,6 +370,7 @@ public class CipherUI extends JFrame {
             if (input == 0) {
                 round.fillWithRandomPermutation();
                 addRoundLabel("Permutation Round");
+                cipher.addRound(round);
                 JOptionPane.showMessageDialog(null, "Added random permutation round");
             } else if (input == 1) {
                 int[] mapping = new int[8 * cipher.getBlockSize()];
@@ -389,8 +382,18 @@ public class CipherUI extends JFrame {
                 }
                 round.setPermutationMapping(mapping);
                 addRoundLabel("Permutation Round");
+                cipher.addRound(round);
                 JOptionPane.showMessageDialog(null, "Added permutation round");
             }
         }
+    }
+
+    // EFFECTS: converts the given byte array into a space-separated string
+    public String byteArrayToString(Byte[] input) {
+        String output = "";
+        for (Byte b : input) {
+            output += (b & 0xff) + " ";
+        }
+        return output;
     }
 }
