@@ -22,6 +22,8 @@ public class CipherUI extends JFrame {
     private JPanel buttonPanel;
     private JPanel cipherPanel;
 
+    // MODIFIES: this
+    // EFFECTS: initializes the UI fields and graphics
     public CipherUI() {
         super("Cipher Creator");
         initializeFields();
@@ -29,21 +31,19 @@ public class CipherUI extends JFrame {
     }
 
     // MODIFIES: this
-    // EFFECTS:  creates cipher a block size of 2
+    // EFFECTS:  creates a cipher with block size 2
     private void initializeFields() {
         cipher = new Cipher(2);
     }
 
     // MODIFIES: this
-    // EFFECTS:  draws the Cipher JFrame Window
+    // EFFECTS: adds the button panel, cipher round panel, and the menu bar to the main JFrame
     private void initializeGraphics() {
-        // from https://stackoverflow.com/questions/7050972/layout-manager-preferredsize-java
-
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         buttonPanel = createButtonPanel();
         cipherPanel = createCipherPanel();
-        JMenuBar menuBar = createMenuBar();
 
+        JMenuBar menuBar = createMenuBar();
         setJMenuBar(menuBar);
 
         JPanel cipherPanelWrapper = new JPanel();
@@ -58,20 +58,20 @@ public class CipherUI extends JFrame {
     }
 
     // EFFECTS: creates a new JPanel for the cipher round display
+    // SOURCE: https://stackoverflow.com/questions/7050972/layout-manager-preferredsize-java
     private JPanel createCipherPanel() {
         JPanel cipherPanel = new JPanel();
         cipherPanel.setLayout(new BoxLayout(cipherPanel, BoxLayout.Y_AXIS));
         cipherPanel.setMinimumSize(new Dimension(100, 200));
-        //cipherPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         return cipherPanel;
     }
 
     // MODIFIES: this
-    // EFFECTS: adds a new label to the cipher round panel
+    // EFFECTS: adds a new label to the cipher round panel and redisplay the panel
     private void addRoundLabel(String text) {
         JLabel label = new JLabel(text);
         label.setPreferredSize(new Dimension(150, 30));
-        label.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+        label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         // label should be in the center of the panel AND the label's text should be in the center of the label
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -83,7 +83,6 @@ public class CipherUI extends JFrame {
         validate();
         repaint();
     }
-
 
     // EFFECTS: creates a menu bar consisting of "File", "Add", and "Info" options
     private JMenuBar createMenuBar() {
@@ -117,14 +116,13 @@ public class CipherUI extends JFrame {
     }
 
     // MODIFIES: this
-    // EFFECTS: creates and adds a JPanel for encrypt and decrypt buttons
+    // EFFECTS: creates a JPanel for the encrypt and decrypt buttons
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(new JButton(new EncryptMessage()));
         buttonPanel.add(new JButton(new DecryptMessage()));
         return buttonPanel;
     }
-
 
     /**
      * Represents action to be taken when user wants to encrypt a message
@@ -136,8 +134,11 @@ public class CipherUI extends JFrame {
         }
 
         @Override
+        // MODIFIES: this
+        // EFFECTS: displays a UI pane for user to enter their message and keys,
+        // and encrypts the message accordingly
         public void actionPerformed(ActionEvent evt) {
-            // taken from https://stackoverflow.com/questions/6555040/multiple-input-in-joptionpane-showinputdialog
+            // SOURCE: https://stackoverflow.com/questions/6555040/multiple-input-in-joptionpane-showinputdialog
             JTextField message = new JTextField();
             ArrayList<JTextField> keyFields = new ArrayList<>();
             Object[] input = createMessageObject(message, keyFields);
@@ -166,8 +167,10 @@ public class CipherUI extends JFrame {
             super("Decrypt");
         }
 
-        // add effects...
         @Override
+        // MODIFIES: this
+        // EFFECTS: displays a UI pane for user to enter their message and keys,
+        // and decrypts the message accordingly
         public void actionPerformed(ActionEvent evt) {
             // taken from https://stackoverflow.com/questions/6555040/multiple-input-in-joptionpane-showinputdialog
             JTextField message = new JTextField();
@@ -218,7 +221,7 @@ public class CipherUI extends JFrame {
         input[1] = message;
         for (int i = 1; i <= numOfKeys; i++) {
             JTextField key = new JTextField();
-            input[2 * i] = "Key " + Integer.toString(i) + ":";
+            input[2 * i] = "Key " + i + ":";
             input[2 * i + 1] = key;
             keyFields.add(key);
         }
@@ -234,8 +237,9 @@ public class CipherUI extends JFrame {
             super("Load");
         }
 
-        // EFFECTS....
         @Override
+        // MODIFIES: this
+        // EFFECTS: loads the cipher in the specified filepath that the user inputs in a pop-up pane
         public void actionPerformed(ActionEvent evt) {
             String filepath = JOptionPane.showInputDialog("Filepath: ");
             jsonWriter = new JsonWriter(filepath);
@@ -279,6 +283,8 @@ public class CipherUI extends JFrame {
         }
 
         @Override
+        // MODIFIES: this
+        // EFFECTS: saves the cipher to the specified filepath that the user inputs in a pop-up pane
         public void actionPerformed(ActionEvent evt) {
             String filepath = JOptionPane.showInputDialog("Filepath: ");
             jsonWriter = new JsonWriter(filepath);
@@ -306,12 +312,19 @@ public class CipherUI extends JFrame {
         }
 
         @Override
+        // MODIFIES: this
+        // EFFECTS: creates a new cipher with a specified block size that the user inputs in a pop-up pane
         public void actionPerformed(ActionEvent evt) {
-            int blockSize = Integer.parseInt(JOptionPane.showInputDialog("Block size:"));
-            cipher = new Cipher(blockSize);
-            JOptionPane.showMessageDialog(null, "Created new cipher with block size "
-                    + blockSize);
-            redisplayRounds();
+            try {
+                int blockSize = Integer.parseInt(JOptionPane.showInputDialog("Block size:"));
+                cipher = new Cipher(blockSize);
+                JOptionPane.showMessageDialog(null, "Created new cipher with block size "
+                        + blockSize);
+                redisplayRounds();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "An error occurred."
+                        + " Please input a single integer");
+            }
         }
     }
 
@@ -325,8 +338,9 @@ public class CipherUI extends JFrame {
         }
 
         @Override
+        // EFFECTS: displays an info image for block ciphers
+        // SOURCE: https://www.techtarget.com/searchsecurity/definition/block-cipher
         public void actionPerformed(ActionEvent evt) {
-            // Image source: https://www.techtarget.com/searchsecurity/definition/block-cipher
             ImageIcon img = new ImageIcon("./data/block_cipher.png");
             JOptionPane.showMessageDialog(null, "", "Info",
                     JOptionPane.INFORMATION_MESSAGE, img);
@@ -343,6 +357,8 @@ public class CipherUI extends JFrame {
         }
 
         @Override
+        // MODIFIES: this
+        // EFFECTS: prompts the user to add a mix key round to the cipher
         public void actionPerformed(ActionEvent evt) {
             cipher.addRound(new MixKeyRound(cipher.getBlockSize()));
             addRoundLabel("Mix Key Round");
@@ -360,6 +376,8 @@ public class CipherUI extends JFrame {
         }
 
         @Override
+        // MODIFIES: this
+        // EFFECTS: prompts the user to add a substitution round to the cipher
         public void actionPerformed(ActionEvent evt) {
             SubstitutionRound round = new SubstitutionRound(cipher.getBlockSize());
             int input = JOptionPane.showConfirmDialog(null,
@@ -371,11 +389,17 @@ public class CipherUI extends JFrame {
                 cipher.addRound(round);
                 JOptionPane.showMessageDialog(null, "Added random substitution round");
             } else if (input == 1) {
-                int[] mapping = askForMapping(16);
-                round.setSubstitutionMapping(mapping);
-                addRoundLabel("Substitution Round");
-                cipher.addRound(round);
-                JOptionPane.showMessageDialog(null, "Added substitution round");
+                try {
+                    int[] mapping = askForMapping(16);
+                    round.setSubstitutionMapping(mapping);
+                    addRoundLabel("Substitution Round");
+                    cipher.addRound(round);
+                    JOptionPane.showMessageDialog(null, "Added substitution round");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "An error occurred."
+                            + " Please input 16 space-separated integers");
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -390,6 +414,8 @@ public class CipherUI extends JFrame {
         }
 
         @Override
+        // MODIFIES: this
+        // EFFECTS: prompts the user to add a permutation round to the cipher
         public void actionPerformed(ActionEvent evt) {
             PermutationRound round = new PermutationRound(cipher.getBlockSize());
             int input = JOptionPane.showConfirmDialog(null,
@@ -401,11 +427,17 @@ public class CipherUI extends JFrame {
                 cipher.addRound(round);
                 JOptionPane.showMessageDialog(null, "Added random permutation round");
             } else if (input == 1) {
-                int[] mapping = askForMapping(8 * cipher.getBlockSize());
-                round.setPermutationMapping(mapping);
-                addRoundLabel("Permutation Round");
-                cipher.addRound(round);
-                JOptionPane.showMessageDialog(null, "Added permutation round");
+                int mappingSize = 8 * cipher.getBlockSize();
+                try {
+                    int[] mapping = askForMapping(mappingSize);
+                    round.setPermutationMapping(mapping);
+                    addRoundLabel("Permutation Round");
+                    cipher.addRound(round);
+                    JOptionPane.showMessageDialog(null, "Added permutation round");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "An error occurred."
+                            + " Please input " + mappingSize + " space-separated integers");
+                }
             }
         }
     }
