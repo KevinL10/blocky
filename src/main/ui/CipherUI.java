@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 // Class representing the cipher ui
+// Referenced CPSC 210 DrawingPlayer and AlarmSystem projects for Java Swing
 public class CipherUI extends JFrame {
     public static final int WIDTH = 1000;
     public static final int HEIGHT = 700;
