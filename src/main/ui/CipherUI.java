@@ -1,9 +1,6 @@
 package ui;
 
-import model.Cipher;
-import model.MixKeyRound;
-import model.PermutationRound;
-import model.SubstitutionRound;
+import model.*;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
@@ -95,6 +92,7 @@ public class CipherUI extends JFrame {
         JMenu fileMenu = new JMenu("File");
         fileMenu.add(new LoadCipher());
         fileMenu.add(new SaveCipher());
+        fileMenu.add(new NewCipher());
         menuBar.add(fileMenu);
 
         JMenu addMenu = new JMenu("Add");
@@ -244,6 +242,7 @@ public class CipherUI extends JFrame {
             jsonReader = new JsonReader(filepath);
             try {
                 cipher = jsonReader.read();
+                redisplayRounds();
                 JOptionPane.showMessageDialog(null, "Loaded cipher with block size "
                         + cipher.getBlockSize() + "!");
             } catch (IOException e) {
@@ -253,6 +252,22 @@ public class CipherUI extends JFrame {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: clears the current cipher panel and redisplay the cipher rounds
+    public void redisplayRounds() {
+        cipherPanel.removeAll();
+        for (Round r : cipher.getRounds()) {
+            if (r instanceof MixKeyRound) {
+                addRoundLabel("Mix Key Round");
+            } else if (r instanceof SubstitutionRound) {
+                addRoundLabel("Substitution Round");
+            } else if (r instanceof PermutationRound) {
+                addRoundLabel("Permutation Round");
+            }
+        }
+        revalidate();
+        repaint();
+    }
 
     /**
      * Represents action to be taken when user wants to save a message to a filepath
@@ -278,6 +293,25 @@ public class CipherUI extends JFrame {
                 JOptionPane.showMessageDialog(null, "Unable to write to file: "
                         + filepath);
             }
+        }
+    }
+
+    /**
+     * Represents action to be taken when user wants to create a new cipher with a specific blocksize
+     */
+    private class NewCipher extends AbstractAction {
+
+        NewCipher() {
+            super("New");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            int blockSize = Integer.parseInt(JOptionPane.showInputDialog("Block size:"));
+            cipher = new Cipher(blockSize);
+            JOptionPane.showMessageDialog(null, "Created new cipher with block size "
+                    + blockSize);
+            redisplayRounds();
         }
     }
 
@@ -337,13 +371,7 @@ public class CipherUI extends JFrame {
                 cipher.addRound(round);
                 JOptionPane.showMessageDialog(null, "Added random substitution round");
             } else if (input == 1) {
-                int[] mapping = new int[16];
-                String[] stringMapping = JOptionPane.showInputDialog(null,
-                        "Mapping:").split(" ");
-                for (int i = 0; i < 16; i++) {
-                    mapping[i] = Integer.parseInt(stringMapping[i]);
-                    System.out.println(mapping[i]);
-                }
+                int[] mapping = askForMapping(16);
                 round.setSubstitutionMapping(mapping);
                 addRoundLabel("Substitution Round");
                 cipher.addRound(round);
@@ -373,19 +401,24 @@ public class CipherUI extends JFrame {
                 cipher.addRound(round);
                 JOptionPane.showMessageDialog(null, "Added random permutation round");
             } else if (input == 1) {
-                int[] mapping = new int[8 * cipher.getBlockSize()];
-                String[] stringMapping = JOptionPane.showInputDialog(null,
-                        "Mapping:").split(" ");
-                for (int i = 0; i < 8 * cipher.getBlockSize(); i++) {
-                    mapping[i] = Integer.parseInt(stringMapping[i]);
-                    System.out.println(mapping[i]);
-                }
+                int[] mapping = askForMapping(8 * cipher.getBlockSize());
                 round.setPermutationMapping(mapping);
                 addRoundLabel("Permutation Round");
                 cipher.addRound(round);
                 JOptionPane.showMessageDialog(null, "Added permutation round");
             }
         }
+    }
+
+    // EFFECTS: presents an input dialog that asks the user for a mapping of the given size
+    private int[] askForMapping(int mappingSize) {
+        int[] mapping = new int[mappingSize];
+        String[] stringMapping = JOptionPane.showInputDialog(null,
+                "Mapping:").split(" ");
+        for (int i = 0; i < mappingSize; i++) {
+            mapping[i] = Integer.parseInt(stringMapping[i]);
+        }
+        return mapping;
     }
 
     // EFFECTS: converts the given byte array into a space-separated string
