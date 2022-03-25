@@ -1,13 +1,11 @@
 package ui;
 
-import jdk.nashorn.internal.scripts.JO;
 import model.Cipher;
 import model.MixKeyRound;
 import model.PermutationRound;
 import model.SubstitutionRound;
 import persistence.JsonReader;
 import persistence.JsonWriter;
-import ui.exceptions.StartMenuException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+// Class representing the cipher ui
 public class CipherUI extends JFrame {
     public static final int WIDTH = 1000;
     public static final int HEIGHT = 700;
@@ -23,8 +22,11 @@ public class CipherUI extends JFrame {
     private Cipher cipher;
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
+    private JPanel buttonPanel;
+    private JPanel cipherPanel;
 
     public CipherUI() {
+
         super("Cipher Creator");
         initializeFields();
         initializeGraphics();
@@ -33,42 +35,81 @@ public class CipherUI extends JFrame {
     // MODIFIES: this
     // EFFECTS:  draws the Cipher JFrame Window
     private void initializeGraphics() {
-        setLayout(new BorderLayout());
-        setMinimumSize(new Dimension(WIDTH, HEIGHT));
+        // from https://stackoverflow.com/questions/7050972/layout-manager-preferredsize-java
 
-        addButtons();
-        addMenuBar();
-        //addCipherFrame();
+        /*
+        //setPreferredSize(new Dimension(500, 500));
+        JPanel controlPane = new JPanel();
+        JPanel buttonPane = new JPanel();
 
-        JPanel j = new JPanel();
-        j.add(new JButton("ABCD"));
-        add(j, BorderLayout.EAST);
-        j.setSize(100, 100);
+        controlPane.setLayout(new BoxLayout(controlPane, BoxLayout.PAGE_AXIS));
+        controlPane.setPreferredSize(new Dimension(200, 200));
+        controlPane.add(new JScrollPane(new JTextArea()));
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(new JButton(new EncryptMessage()));
+        buttonPanel.add(new JButton(new DecryptMessage()));
+        buttonPanel.add(new JButton(new AddRound()));
+
+        JPanel cipherPanel = new JPanel();
+
+
+        cipherPanel.setLayout(new BoxLayout(cipherPanel, BoxLayout.Y_AXIS));
+        cipherPanel.setPreferredSize(new Dimension(40, 400));
+        cipherPanel.setBackground(Color.YELLOW);
+
+        JPanel tempPanel = new JPanel();
+        for (int i = 0; i < 5; i++) {
+            JLabel label = new JLabel("round" + i);
+            label.setAlignmentX(Component.CENTER_ALIGNMENT);
+            label.setMinimumSize(new Dimension(40, 100));
+            label.setBackground(Color.GREEN);
+            cipherPanel.add(label);
+        }*/
+
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        buttonPanel = createButtonPanel();
+        cipherPanel = createCipherPanel();
+        JMenuBar menuBar = createMenuBar();
+
+        setJMenuBar(menuBar);
+        add(buttonPanel, BorderLayout.NORTH);
+        add(cipherPanel, BorderLayout.SOUTH);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        pack();
         setVisible(true);
     }
 
     // MODIFIES: this
-    // EFFECTS: creates a JInternalFrame for the cipher
-    private void addCipherFrame() {
-        JInternalFrame in = new JInternalFrame();
-        in.setTitle("cipher frame");
+    // EFFECTS: creates a new JPanel for the cipher round display
+    private JPanel createCipherPanel() {
+        // use box layout to properly display the rounds
+        JPanel cipherPanel = new JPanel();
+        cipherPanel.setLayout(new BoxLayout(cipherPanel, BoxLayout.Y_AXIS));
+        cipherPanel.setPreferredSize(new Dimension(40, 400));
+        cipherPanel.setBackground(Color.YELLOW);
 
-        in.reshape(0, 0, 50, 50);
-        in.setVisible(true);
-        add(in);
+        for (int i = 0; i < 20; i++) {
+            JLabel label = new JLabel("round" + i);
+            label.setAlignmentX(Component.CENTER_ALIGNMENT);
+            label.setMinimumSize(new Dimension(40, 100));
+            label.setBackground(Color.GREEN);
+            cipherPanel.add(label);
+        }
+
+        return cipherPanel;
     }
 
     // MODIFIES: this
     // EFFECTS:  creates cipher a block size of 2
+    // and initializes main JPanel
     private void initializeFields() {
         cipher = new Cipher(2);
     }
 
     // ,...
-    private void addMenuBar() {
+    private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu("File");
@@ -94,32 +135,18 @@ public class CipherUI extends JFrame {
             }
         });
 
-        setJMenuBar(menuBar);
+        return menuBar;
     }
 
     // MODIFIES: this
-    // EFFECTS: creates JPanel for add, encrypt, and decrypt buttons
-    private void addButtons() {
-        JPanel buttons = new JPanel();
+    // EFFECTS: creates and adds a JPanel for encrypt and decrypt buttons
+    private JPanel createButtonPanel() {
+        JPanel buttonPanel = new JPanel();
 
-        buttons.add(new JButton(new AddRound()));
-        buttons.add(new JButton(new EncryptMessage()));
-        buttons.add(new JButton(new DecryptMessage()));
+        buttonPanel.add(new JButton(new EncryptMessage()));
+        buttonPanel.add(new JButton(new DecryptMessage()));
 
-        JLabel label = new JLabel("substitution");
-        label.setBounds(150, 100, 50, 50);
-        buttons.add(label);
-        add(buttons);
-
-        /*
-        JPanel panel2 = new JPanel();
-        panel2.add(new JButton(new AddRound()));
-
-        JPanel container = new JPanel();
-        container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
-
-
-        add(panel2);*/
+        return buttonPanel;
     }
 
     /**
@@ -149,7 +176,35 @@ public class CipherUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            JOptionPane.showMessageDialog(null, "Encrypting message...");
+            // taken from https://stackoverflow.com/questions/6555040/multiple-input-in-joptionpane-showinputdialog
+            JTextField message = new JTextField();
+            ArrayList<JTextField> keyFields = new ArrayList<>();
+
+            int numOfKeys = cipher.getNumberOfKeyRounds();
+            Object[] input = new Object[2 + numOfKeys * 2];
+            input[0] = "Message:";
+            input[1] = message;
+            for (int i = 2; i < 2 + numOfKeys * 2; i += 2) {
+                JTextField key = new JTextField();
+                input[i] = "Key " + Integer.toString(i) + ":";
+                input[i + 1] = key;
+                keyFields.add(key);
+            }
+
+            ArrayList<Byte[]> keys = new ArrayList<>();
+            int option = JOptionPane.showConfirmDialog(null, input,
+                    "Encrypt Message", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                for (JTextField next : keyFields) {
+                    String[] keyBytes = next.getText().split(" ");
+                    keys.add(stringArrayToByteArray(keyBytes));
+                }
+
+                String[] messageString = message.getText().split(" ");
+                Byte[] messageBytes = stringArrayToByteArray(messageString);
+                Byte[] encryptedMessage = cipher.encryptByteArray(messageBytes, keys);
+                JOptionPane.showMessageDialog(null, byteArrayToString(encryptedMessage));
+            }
         }
     }
 
@@ -162,10 +217,57 @@ public class CipherUI extends JFrame {
             super("Decrypt");
         }
 
+
+        // TODO: actually make things object-oriented
         @Override
         public void actionPerformed(ActionEvent evt) {
+            // taken from https://stackoverflow.com/questions/6555040/multiple-input-in-joptionpane-showinputdialog
+            JTextField message = new JTextField();
+            ArrayList<JTextField> keyFields = new ArrayList<>();
+
+            int numOfKeys = cipher.getNumberOfKeyRounds();
+            Object[] input = new Object[2 + numOfKeys * 2];
+            input[0] = "Message:";
+            input[1] = message;
+            for (int i = 2; i < 2 + numOfKeys * 2; i += 2) {
+                JTextField key = new JTextField();
+                input[i] = "Key " + Integer.toString(i) + ":";
+                input[i + 1] = key;
+                keyFields.add(key);
+            }
+
+            ArrayList<Byte[]> keys = new ArrayList<>();
+            int option = JOptionPane.showConfirmDialog(null, input,
+                    "Decrypt Message", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                for (JTextField next : keyFields) {
+                    String[] keyBytes = next.getText().split(" ");
+                    keys.add(stringArrayToByteArray(keyBytes));
+                }
+
+                String[] messageString = message.getText().split(" ");
+                Byte[] messageBytes = stringArrayToByteArray(messageString);
+                Byte[] encryptedMessage = cipher.decryptByteArray(messageBytes, keys);
+                JOptionPane.showMessageDialog(null, byteArrayToString(encryptedMessage));
+            }
             JOptionPane.showMessageDialog(null, "Decrypting message...");
         }
+    }
+
+    public Byte[] stringArrayToByteArray(String[] input) {
+        Byte[] output = new Byte[input.length];
+        for (int i = 0; i < input.length; i++) {
+            output[i] = Integer.valueOf(input[i]).byteValue();
+        }
+        return output;
+    }
+
+    public String byteArrayToString(Byte[] input) {
+        String output = "";
+        for (Byte b : input) {
+            output += (b & 0xff) + " ";
+        }
+        return output;
     }
 
     /**
@@ -268,7 +370,24 @@ public class CipherUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent evt) {
             SubstitutionRound round = new SubstitutionRound(cipher.getBlockSize());
-            JOptionPane.showMessageDialog(null, "Added Substitution Round");
+            int input = JOptionPane.showConfirmDialog(null,
+                    "Would you like to randomize the substitution round?");
+
+            if (input == 0) {
+                round.fillWithRandomSubstitution();
+                JOptionPane.showMessageDialog(null, "Added random substitution round");
+            } else if (input == 1) {
+                int[] mapping = new int[16];
+                String[] stringMapping = JOptionPane.showInputDialog(null,
+                        "Mapping:").split(" ");
+                for (int i = 0; i < 16; i++) {
+                    mapping[i] = Integer.parseInt(stringMapping[i]);
+                    System.out.println(mapping[i]);
+                }
+                round.setSubstitutionMapping(mapping);
+
+                JOptionPane.showMessageDialog(null, "Added substitution round");
+            }
         }
     }
 
@@ -284,7 +403,24 @@ public class CipherUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent evt) {
             PermutationRound round = new PermutationRound(cipher.getBlockSize());
-            JOptionPane.showMessageDialog(null, "Added Permutation Round");
+            int input = JOptionPane.showConfirmDialog(null,
+                    "Would you like to randomize the permutation round?");
+
+            if (input == 0) {
+                round.fillWithRandomPermutation();
+                JOptionPane.showMessageDialog(null, "Added random permutation round");
+            } else if (input == 1) {
+                int[] mapping = new int[8 * cipher.getBlockSize()];
+                String[] stringMapping = JOptionPane.showInputDialog(null,
+                        "Mapping:").split(" ");
+                for (int i = 0; i < 8 * cipher.getBlockSize(); i++) {
+                    mapping[i] = Integer.parseInt(stringMapping[i]);
+                    System.out.println(mapping[i]);
+                }
+                round.setPermutationMapping(mapping);
+
+                JOptionPane.showMessageDialog(null, "Added permutation round");
+            }
         }
     }
 }
