@@ -26,46 +26,22 @@ public class CipherUI extends JFrame {
     private JPanel cipherPanel;
 
     public CipherUI() {
-
         super("Cipher Creator");
         initializeFields();
         initializeGraphics();
     }
 
     // MODIFIES: this
+    // EFFECTS:  creates cipher a block size of 2
+    private void initializeFields() {
+        cipher = new Cipher(2);
+    }
+
+
+    // MODIFIES: this
     // EFFECTS:  draws the Cipher JFrame Window
     private void initializeGraphics() {
         // from https://stackoverflow.com/questions/7050972/layout-manager-preferredsize-java
-
-        /*
-        //setPreferredSize(new Dimension(500, 500));
-        JPanel controlPane = new JPanel();
-        JPanel buttonPane = new JPanel();
-
-        controlPane.setLayout(new BoxLayout(controlPane, BoxLayout.PAGE_AXIS));
-        controlPane.setPreferredSize(new Dimension(200, 200));
-        controlPane.add(new JScrollPane(new JTextArea()));
-
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(new JButton(new EncryptMessage()));
-        buttonPanel.add(new JButton(new DecryptMessage()));
-        buttonPanel.add(new JButton(new AddRound()));
-
-        JPanel cipherPanel = new JPanel();
-
-
-        cipherPanel.setLayout(new BoxLayout(cipherPanel, BoxLayout.Y_AXIS));
-        cipherPanel.setPreferredSize(new Dimension(40, 400));
-        cipherPanel.setBackground(Color.YELLOW);
-
-        JPanel tempPanel = new JPanel();
-        for (int i = 0; i < 5; i++) {
-            JLabel label = new JLabel("round" + i);
-            label.setAlignmentX(Component.CENTER_ALIGNMENT);
-            label.setMinimumSize(new Dimension(40, 100));
-            label.setBackground(Color.GREEN);
-            cipherPanel.add(label);
-        }*/
 
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         buttonPanel = createButtonPanel();
@@ -73,8 +49,12 @@ public class CipherUI extends JFrame {
         JMenuBar menuBar = createMenuBar();
 
         setJMenuBar(menuBar);
+
+        JPanel cipherPanelWrapper = new JPanel();
+        cipherPanelWrapper.add(cipherPanel);
+
         add(buttonPanel, BorderLayout.NORTH);
-        add(cipherPanel, BorderLayout.SOUTH);
+        add(cipherPanelWrapper, BorderLayout.CENTER);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
@@ -84,29 +64,31 @@ public class CipherUI extends JFrame {
     // MODIFIES: this
     // EFFECTS: creates a new JPanel for the cipher round display
     private JPanel createCipherPanel() {
-        // use box layout to properly display the rounds
         JPanel cipherPanel = new JPanel();
         cipherPanel.setLayout(new BoxLayout(cipherPanel, BoxLayout.Y_AXIS));
-        cipherPanel.setPreferredSize(new Dimension(40, 400));
-        cipherPanel.setBackground(Color.YELLOW);
-
-        for (int i = 0; i < 20; i++) {
-            JLabel label = new JLabel("round" + i);
-            label.setAlignmentX(Component.CENTER_ALIGNMENT);
-            label.setMinimumSize(new Dimension(40, 100));
-            label.setBackground(Color.GREEN);
-            cipherPanel.add(label);
-        }
-
+        cipherPanel.setMinimumSize(new Dimension(100, 200));
+        //cipherPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         return cipherPanel;
     }
 
     // MODIFIES: this
-    // EFFECTS:  creates cipher a block size of 2
-    // and initializes main JPanel
-    private void initializeFields() {
-        cipher = new Cipher(2);
+    // EFFECTS: adds a new label to the cipher round panel
+    private void addRoundLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setPreferredSize(new Dimension(150, 30));
+        label.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+
+        // label should be in the center of the panel AND the label's text should be in the center of the label
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        label.setHorizontalAlignment(JLabel.CENTER);
+
+        JPanel wrapper = new JPanel();
+        wrapper.add(label);
+        cipherPanel.add(wrapper);
+        validate();
+        repaint();
     }
+
 
     // ,...
     private JMenuBar createMenuBar() {
@@ -123,7 +105,7 @@ public class CipherUI extends JFrame {
         addMenu.add(new AddPermutationRound());
         menuBar.add(addMenu);
 
-        // code taken from https://stackoverflow.com/questions/45433871/swing-last-
+        // SOURCE: https://stackoverflow.com/questions/45433871/swing-last-
         // jmenuitem-occupy-the-rest-of-space-on-jmenubar
         menuBar.add(new JMenuItem(new InfoMenu()) {
             @Override
@@ -149,21 +131,6 @@ public class CipherUI extends JFrame {
         return buttonPanel;
     }
 
-    /**
-     * Represents action to be taken when user wants to add a new round
-     * to the cipher.
-     */
-    private class AddRound extends AbstractAction {
-
-        AddRound() {
-            super("Add Round");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            JOptionPane.showMessageDialog(null, "Adding round...");
-        }
-    }
 
     /**
      * Represents action to be taken when user wants to encrypt a message
@@ -250,7 +217,6 @@ public class CipherUI extends JFrame {
                 Byte[] encryptedMessage = cipher.decryptByteArray(messageBytes, keys);
                 JOptionPane.showMessageDialog(null, byteArrayToString(encryptedMessage));
             }
-            JOptionPane.showMessageDialog(null, "Decrypting message...");
         }
     }
 
@@ -354,6 +320,7 @@ public class CipherUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent evt) {
             cipher.addRound(new MixKeyRound(cipher.getBlockSize()));
+            addRoundLabel("Mix Key Round");
             JOptionPane.showMessageDialog(null, "Added Mix Key Round");
         }
     }
@@ -375,6 +342,7 @@ public class CipherUI extends JFrame {
 
             if (input == 0) {
                 round.fillWithRandomSubstitution();
+                addRoundLabel("Substitution Round");
                 JOptionPane.showMessageDialog(null, "Added random substitution round");
             } else if (input == 1) {
                 int[] mapping = new int[16];
@@ -386,6 +354,7 @@ public class CipherUI extends JFrame {
                 }
                 round.setSubstitutionMapping(mapping);
 
+                addRoundLabel("Substitution Round");
                 JOptionPane.showMessageDialog(null, "Added substitution round");
             }
         }
@@ -408,6 +377,7 @@ public class CipherUI extends JFrame {
 
             if (input == 0) {
                 round.fillWithRandomPermutation();
+                addRoundLabel("Permutation Round");
                 JOptionPane.showMessageDialog(null, "Added random permutation round");
             } else if (input == 1) {
                 int[] mapping = new int[8 * cipher.getBlockSize()];
@@ -418,7 +388,7 @@ public class CipherUI extends JFrame {
                     System.out.println(mapping[i]);
                 }
                 round.setPermutationMapping(mapping);
-
+                addRoundLabel("Permutation Round");
                 JOptionPane.showMessageDialog(null, "Added permutation round");
             }
         }
