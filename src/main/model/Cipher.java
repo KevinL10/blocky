@@ -21,9 +21,17 @@ public class Cipher implements Writeable {
     }
 
     // MODIFIES: this
-    // EFFECTS: appends the given round to the current cipher
+    // EFFECTS: appends the given round to the current cipher and updates the EventLog
     public void addRound(Round round) {
         rounds.add(round);
+
+        if (round instanceof MixKeyRound) {
+            EventLog.getInstance().logEvent(new Event("Added Mix Key Round"));
+        } else if (round instanceof SubstitutionRound) {
+            EventLog.getInstance().logEvent(new Event("Added Substitution Round"));
+        } else if (round instanceof PermutationRound) {
+            EventLog.getInstance().logEvent(new Event("Added Permutation Round"));
+        }
     }
 
     // REQUIRES: plaintext should have length blockSize
@@ -43,6 +51,7 @@ public class Cipher implements Writeable {
             }
             currentBytes = round.encryptRound(currentBytes);
         }
+        EventLog.getInstance().logEvent(new Event("Encrypted Message"));
         return currentBytes;
     }
 
@@ -64,6 +73,7 @@ public class Cipher implements Writeable {
             }
             currentBytes = round.decryptRound(currentBytes);
         }
+        EventLog.getInstance().logEvent(new Event("Decrypted Message"));
         return currentBytes;
     }
 

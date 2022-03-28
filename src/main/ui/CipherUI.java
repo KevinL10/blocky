@@ -1,12 +1,15 @@
 package ui;
 
 import model.*;
+import model.Event;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,7 +56,21 @@ public class CipherUI extends JFrame {
         add(buttonPanel, BorderLayout.NORTH);
         add(cipherPanelWrapper, BorderLayout.CENTER);
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // SOURCE: https://stackoverflow.com/questions/16372241/run-function-on-jframe-close
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                EventLog eventLog = EventLog.getInstance();
+                for (Event next : eventLog) {
+                    System.out.println(next);
+                    System.out.println();
+                }
+                dispose();
+                System.exit(0);
+            }
+        });
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        // for Event in EventLog.getInstance(), sout event
         pack();
         setVisible(true);
     }
