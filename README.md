@@ -30,3 +30,30 @@ As a user, I want to be able to:
 #### Phase 2
 - save all components (rounds, blocksize) of a cipher to a file
 - choose between "create" or "load existing" cipher on start
+
+#### Phase 4: Task 2
+```
+Wed Mar 30 15:10:44 PDT 2022
+Encrypted Message
+
+Wed Mar 30 15:10:48 PDT 2022
+Decrypted Message
+
+Wed Mar 30 15:10:56 PDT 2022
+Added Mix Key Round
+
+Wed Mar 30 15:10:59 PDT 2022
+Added Mix Key Round
+
+Wed Mar 30 15:11:03 PDT 2022
+Added Substitution Round
+
+Wed Mar 30 15:11:07 PDT 2022
+Added Permutation Round
+
+Wed Mar 30 15:11:15 PDT 2022
+Encrypted Message
+
+Wed Mar 30 15:11:23 PDT 2022
+Decrypted Message
+```
