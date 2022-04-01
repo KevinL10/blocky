@@ -62,15 +62,13 @@ public class CipherUI extends JFrame {
             public void windowClosing(WindowEvent e) {
                 EventLog eventLog = EventLog.getInstance();
                 for (Event next : eventLog) {
-                    System.out.println(next);
-                    System.out.println();
+                    System.out.println(next + "\n");
                 }
                 dispose();
                 System.exit(0);
             }
         });
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        // for Event in EventLog.getInstance(), sout event
         pack();
         setVisible(true);
     }
