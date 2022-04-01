@@ -57,3 +57,22 @@ Encrypted Message
 Wed Mar 30 15:11:23 PDT 2022
 Decrypted Message
 ```
+
+#### Phase 4: Task 3
+
+The design consists of 4 distinct sections:
+- A model package that stores the different types of rounds and the interfaces they implement
+- A persistence package with JsonWriter and JsonReader
+- A ui package that associates with the classes above
+- Event-EventLog classes that log the actions performed by the user
+
+Overall, I thought that the classes had high cohesion:
+- The MixKeyRound/PermutationRound/SubstitutionRound classes are each responsible for a single functionality
+- Similarly, JsonReader and JsonWriter are cohesive and focus on loading/saving files
+- Event and EventLog also accomplish a single task
+
+Further refractions could include:
+- Making Round also implement the Writable interface, so that there's less coupling within the Round classes
+- The substitution and permutation operations are quite similar in terms of user input/output; I could reduce duplication by abstracting shared ui actions into separate methods. For example, the `AddPermutationRound` and `AddSubstitutionRound` share similar implementations.
+- Additionally, I could reduce duplication by making SubstitutionRound and PermutationRound extend a common abstract class, under the Round interface
+- The CipherUI class currently contains multiple inner classes for each button action. Cohesion could be improved by placing these inner classes into separate ui classes, so that each class has a single responsibility.
