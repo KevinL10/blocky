@@ -276,7 +276,7 @@ public class CipherUI extends JFrame {
     // EFFECTS: clears the current cipher panel and redisplay the cipher rounds
     public void redisplayRounds() {
         cipherPanel.removeAll();
-        for (Round r : cipher.getRounds()) {
+        for (Round r : cipher) {
             if (r instanceof MixKeyRound) {
                 addRoundLabel("Mix Key Round");
             } else if (r instanceof SubstitutionRound) {

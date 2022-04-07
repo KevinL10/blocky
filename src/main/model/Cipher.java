@@ -5,11 +5,12 @@ import org.json.JSONObject;
 import persistence.Writeable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /*
 Represents the cipher as a sequence of individual Rounds, each with size blockSize
  */
-public class Cipher implements Writeable {
+public class Cipher implements Writeable, Iterable<Round> {
     private ArrayList<Round> rounds;
     private int blockSize;
 
@@ -103,6 +104,10 @@ public class Cipher implements Writeable {
             jsonArray.put(r.toJson());
         }
         return jsonArray;
+    }
+
+    public Iterator<Round> iterator() {
+        return rounds.iterator();
     }
 
     // getters and setters
