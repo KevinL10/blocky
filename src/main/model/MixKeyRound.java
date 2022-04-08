@@ -6,7 +6,7 @@ import persistence.Writeable;
 /*
 MixKeyRound represents a round for mixing in the key using XOR on each bit
  */
-public class MixKeyRound implements Round, Writeable {
+public class MixKeyRound implements Round {
     private Byte[] key;
     private int blockSize;
 

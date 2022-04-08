@@ -12,7 +12,7 @@ import java.util.Collections;
 PermutationRound represents a round for substituting 4-bit blocks
 with a corresponding 4-bit value
  */
-public class SubstitutionRound implements Round, Writeable {
+public class SubstitutionRound implements Round {
     private int[] mapping;
     private int blockSize;
 

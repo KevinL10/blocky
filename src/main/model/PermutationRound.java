@@ -12,7 +12,7 @@ import java.util.Collections;
 PermutationRound represents a round for rearranging the bits
 according to a certain mapping
  */
-public class PermutationRound implements Round, Writeable {
+public class PermutationRound implements Round {
     private int[] mapping;
     private int blockSize;
 
